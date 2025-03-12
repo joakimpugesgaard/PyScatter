@@ -80,16 +80,18 @@ class domain:
             if plane == "xy":
                 x, y = cart_grid
                 z = 0
+   
             elif plane == "xz":
                 x, z = cart_grid
                 y = 0
+                
             elif plane == "yz":
                 y, z = cart_grid
                 x = 0
             
             r = np.sqrt(x**2 + y**2 + z**2)
             theta = np.arccos(z / r)
-            phi = np.arctan2(y, x)
+            phi = np.arctan2(y, x) 
             
             spherical_grids[plane] = np.array([r, theta, phi])
 
