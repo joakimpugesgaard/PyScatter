@@ -27,7 +27,7 @@ class domain:
     
     def __init__(self, size, planes = {"xy", "xz"}):
         self.size = size
-        self.N = 300 # Number of points in each direction
+        self.N = 200 # Number of points in each direction
         self.planes = planes
         self.check_params(size, planes)
         
@@ -72,30 +72,31 @@ class domain:
         return cart_grids
 
     def spherical_grid(self):
-        # Convert cartesian grids to spherical coordinates
-        cart_grids = self.cart_grid()
-        spherical_grids = {}
-        
-        for plane, cart_grid in cart_grids.items():
-            if plane == "xy":
-                x, y = cart_grid
-                z = 0
-   
-            elif plane == "xz":
-                x, z = cart_grid
-                y = 0
+            # Convert cartesian grids to spherical coordinates
+            cart_grids = self.cart_grid()
+            spherical_grids = {}
+            
+            for plane, cart_grid in cart_grids.items():
+                if plane == "xy":
+                    x, y = cart_grid
+                    z = 0
+                    phi = np.arctan2(y, x)
+                    
+                elif plane == "xz":
+                    x, z = cart_grid
+                    y = 0
+                    phi = np.arctan2(y, x)
+                    
+                elif plane == "yz":
+                    y, z = cart_grid
+                    x = 0
+                    phi = np.arctan2(x,y)+np.pi/2  
                 
-            elif plane == "yz":
-                y, z = cart_grid
-                x = 0
-            
-            r = np.sqrt(x**2 + y**2 + z**2)
-            theta = np.arccos(z / r)
-            phi = np.arctan2(y, x) 
-            
-            spherical_grids[plane] = np.array([r, theta, phi])
+                r = np.sqrt(x**2 + y**2 + z**2)
+                theta = np.arccos(z / r)
+                spherical_grids[plane] = np.array([r, theta, phi])
 
-        return spherical_grids
+            return spherical_grids
         
     def show_coord(self, coord, spherical_grids):
         if coord not in ["r", "theta", "phi"]:
