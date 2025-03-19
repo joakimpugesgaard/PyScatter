@@ -66,15 +66,18 @@ class Multipoles:
         
     @staticmethod
     def Clp(l):
-        return -1j * np.sqrt(l / (2 * l + 1))
+        #return -1j * np.sqrt(l / (2 * l + 1))
+        return -1 * np.sqrt(l/(2*l+1))
 
     @staticmethod
     def Clm(l):
-        return 1j * np.sqrt((l + 1) / (2 * l + 1))
+        #return 1j * np.sqrt((l + 1) / (2 * l + 1))
+        return 1 * np.sqrt((l+1)/(2*l+1))
 
     @staticmethod
     def Cl0(l):
-        return -1j
+        #return -1j
+        return 1
 
     @staticmethod
     def hankel(n, x, derivative=False):
@@ -204,14 +207,13 @@ class Multipoles:
         sgn = -2 * ((m < 0) - 0.5) # -1 if m is negative 1 if m is non-negative
         m = abs(m)
         
-        leg = self.Leg[l, m] #* (-1) ** m # Include the (-1)^m Condon-Shortley phase factor in the Legendre function
+        leg = self.Leg[l, m] *(-1)**m # Include the (-1)^m Condon-Shortley phase factor in the Legendre function
         e = np.exp(1j * (sgn * m) * phi) # azimuthal factor
 
         Y = leg * e / np.sqrt(2 * np.pi) 
 
-        #u = np.where((sgn < 0) & (m % 2 != 0))
-        u = np.where((sgn < 0) & (m % 2 != 0), True, False)
-        Y[u] = -Y[u]
+        if sgn < 0 and m % 2 != 0:
+            Y = -Y
 
         return Y
 
@@ -255,16 +257,22 @@ class Multipoles:
 
         # Vectorized computation
         Ap1, A01, Am1 = self.vsh(l, l, m, self.Theta, self.Phi)
-        Alp_m_p = self.Cl0(l) * spatial_func(l, self.wn * self.R) * Ap1
-        Alp_m_0 = self.Cl0(l) * spatial_func(l, self.wn * self.R) * A01
-        Alp_m_m = self.Cl0(l) * spatial_func(l, self.wn * self.R) * Am1
+        
+        spatial0 = spatial_func(l, self.wn * self.R)
+        
+        Alp_m_p = self.Cl0(l) * spatial0 * Ap1
+        Alp_m_0 = self.Cl0(l) * spatial0 * A01
+        Alp_m_m = self.Cl0(l) * spatial0 * Am1
 
         Ap2, A02, Am2 = self.vsh(l, l + 1, m, self.Theta, self.Phi)
         Ap3, A03, Am3 = self.vsh(l, l - 1, m, self.Theta, self.Phi)
 
-        Alp_e_p = self.Clp(l) * spatial_func(l + 1, self.wn * self.R) * Ap2 + self.Clm(l) * spatial_func(l - 1, self.wn * self.R) * Ap3
-        Alp_e_0 = self.Clp(l) * spatial_func(l + 1, self.wn * self.R) * A02 + self.Clm(l) * spatial_func(l - 1, self.wn * self.R) * A03
-        Alp_e_m = self.Clp(l) * spatial_func(l + 1, self.wn * self.R) * Am2 + self.Clm(l) * spatial_func(l - 1, self.wn * self.R) * Am3
+        spatialp = spatial_func(l + 1, self.wn * self.R)
+        spatialm = spatial_func(l - 1, self.wn * self.R)
+        
+        Alp_e_p = self.Clp(l) * spatialp * Ap2 + self.Clm(l) * spatialm * Ap3
+        Alp_e_0 = self.Clp(l) * spatialp * A02 + self.Clm(l) * spatialm * A03
+        Alp_e_m = self.Clp(l) * spatialp * Am2 + self.Clm(l) * spatialm * Am3
 
         P_magnetic = Alp_m_p
         Z_magnetic = Alp_m_0
@@ -373,7 +381,7 @@ class Multipoles:
                 norm = mcolors.Normalize(vmin=vmin, vmax=vmax)
             else:
                 norm = None
-
+        
             fig.suptitle(f'Total Intensity: {type.capitalize()} Multipole(l={l}, m={m})', fontsize=24, fontweight='bold')
             for i, plane in enumerate(self.planes):
                 im = axs[i].imshow(total_intensity[i].T, extent=(-self.size, self.size, -self.size, self.size), origin='lower', cmap='hot', norm=norm)
