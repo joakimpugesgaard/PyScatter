@@ -50,17 +50,24 @@ class focused_beams(Multipoles):
         # Implement PlaneWave beam calculation here
         pass
 
-    def d_jmp(self, j, m, p, Theta):
-        lnCoef = 0.5 * (sp.gammaln(j - m + 1) + sp.gammaln(j + m + 1) - sp.gammaln(j + p + 1) - sp.gammaln(j - p + 1))
-        cosFac = np.cos(Theta / 2) ** (m + p)
-        sinFac = (-np.sin(Theta / 2)) ** (m - p)
+    def d_jmp(j, m, p, Theta):
+        M = max(abs(m), abs(p))
+        N = min(abs(m), abs(p))
         
-        n = j - m
-        alpha = m - p
-        beta = m + p
+        lnCoef = 0.5 * (sp.gammaln(j - M + 1) + sp.gammaln(j + M + 1) - sp.gammaln(j + N + 1) - sp.gammaln(j - N + 1))
+
+        cosFac = np.cos(Theta / 2) ** (abs(m + p))
+        sinFac = (np.sin(Theta / 2)) ** (abs(m-p)) ## p-m? 
+        
+        n = j - M
+        alpha = abs(m - p)
+        beta = abs(m + p)
         hyp = sp.eval_jacobi(n, alpha, beta, np.cos(Theta))
         
-        d_jmp = np.exp(lnCoef) * cosFac * sinFac * hyp
+        if hyp == 0:
+            d_jmp = 0
+        else:
+            d_jmp = np.exp(lnCoef) * cosFac * sinFac * hyp * (-1) ** (0.5*(p-m-abs(m-p)))
         
         return d_jmp
 
@@ -100,7 +107,27 @@ class focused_beams(Multipoles):
             suma += np.abs(C[j])**2 * (2 * j + 1)
         
         return C, lensInt, suma
-
+    
+    def plot_Cjl(self, l, p, q):
+        m = l + p
+        C, lensInt, suma = self.C_jlp(l, p, q)
+        
+        print("The (2j+1)Cjm_z normalization yields %.6f" % suma)
+        print("The LG integral on the aplanatic lens surface is %.3f\n" % lensInt)
+        
+        fig, ax = plt.subplots(1, 1, figsize=(8, 6))
+        ax.bar(np.arange(0, len(C)), np.abs(C)**2, label='mz = %d NA=%.1f' % (m, self.NA), alpha=0.7)
+        
+        ax.set_ylabel(r"$\mathbf{|C_{jm_zp}|}^2$", fontsize=30)
+        ax.set_xlabel('j', fontsize=30)
+        ax.set_xlim(0, self.maxJ)
+        ax.set_xticks(range(0, self.maxJ + 1, 2))  # Set x-ticks to increase in steps of 2
+        ax.legend(fontsize=20)
+        ax.tick_params(axis='both', which='major', labelsize=20)
+        
+        fig.tight_layout()
+        plt.show()
+    
     def LaguerreGauss(self, q, l, rho, z, **kwargs):
         wn = 2 * np.pi / self.wl  # wavenumber
         w = self.get_w(self.NA, l)
