@@ -9,7 +9,7 @@ import mpl_toolkits.mplot3d.axes3d as axes3d
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 class focused_beams(Multipoles):
-    def __init__(self, type, maxJ, wl, domain, nr=1, NA=0.9, f=1000, n_lens = 1):
+    def __init__(self, type, maxJ, wl, domain, p = 1, l = 0, q = 0, nr=1, NA=0.9, f=1000, n_lens = 1):
         super().__init__(maxJ, maxJ, wl, domain, nr)
         self.NA = NA
         self.f = f
@@ -21,6 +21,11 @@ class focused_beams(Multipoles):
         self.planes = self.spherical_grids.keys()
         self.n_lens = n_lens
         self.maxJ = maxJ
+        self.p = p
+        self.l = l
+        self.q = q
+        self.mz = l + p
+        self.wl = wl
         
         # initialize arrays of spherical coordinates. shape = (Nplanes, shape(grid))
         self.R = np.array([self.spherical_grids[plane][0] for plane in self.planes])
@@ -31,6 +36,11 @@ class focused_beams(Multipoles):
             self.beam = self.init_beam(type)
         except ValueError as e:
             print(e)
+        
+        #compute beam coefficients
+        self.C, self.lensInt, self.suma = self.C_jlp()
+        print("The (2j+1)Cjm_z normalization yields %.6f" % self.suma)
+        print("The LG integral on the aplanatic lens surface is %.3f\n" % self.lensInt)
 
     def init_beam(self, type):
         if type == "LaguerreGauss":
@@ -50,39 +60,30 @@ class focused_beams(Multipoles):
         # Implement PlaneWave beam calculation here
         pass
 
-    def d_jmp(j, m, p, Theta):
-        M = max(abs(m), abs(p))
-        N = min(abs(m), abs(p))
+    def d_jmp(self, j, m, p, Theta):
+        lnCoef = 0.5 * (sp.gammaln(j - m + 1) + sp.gammaln(j + m + 1) - sp.gammaln(j + p + 1) - sp.gammaln(j - p + 1))
+        cosFac = np.cos(Theta / 2) ** (m + p)
+        sinFac = (-np.sin(Theta / 2)) ** (m - p)
         
-        lnCoef = 0.5 * (sp.gammaln(j - M + 1) + sp.gammaln(j + M + 1) - sp.gammaln(j + N + 1) - sp.gammaln(j - N + 1))
-
-        cosFac = np.cos(Theta / 2) ** (abs(m + p))
-        sinFac = (np.sin(Theta / 2)) ** (abs(m-p)) ## p-m? 
-        
-        n = j - M
-        alpha = abs(m - p)
-        beta = abs(m + p)
+        n = j - m
+        alpha = m - p
+        beta = m + p
         hyp = sp.eval_jacobi(n, alpha, beta, np.cos(Theta))
         
-        if hyp == 0:
-            d_jmp = 0
-        else:
-            d_jmp = np.exp(lnCoef) * cosFac * sinFac * hyp * (-1) ** (0.5*(p-m-abs(m-p)))
+        d_jmp = np.exp(lnCoef) * cosFac * sinFac * hyp
         
         return d_jmp
 
-    def C_jlp(self, l, p, q):
-        assert self.maxJ >= abs(l)+p, "maxJ must be greater than or equal to abs(l)+p"
+    def C_jlp(self):
+        assert self.maxJ >= abs(self.l)+self.p, "maxJ must be greater than or equal to abs(l)+p"
         
-        wn = 2 * np.pi / self.wl
-        m = l + p
         theta_max = np.arcsin(self.NA / self.n_lens)  # maximum half angle
         theta = np.linspace(0.0001, theta_max, 250)
         
         # Generalize beam calculation
         beam_params = {
-            'q': q,
-            'l': l,
+            'q': self.q,
+            'l': self.l,
             'rho': self.f * np.sin(theta),
             'z': self.f
         }
@@ -95,28 +96,23 @@ class focused_beams(Multipoles):
         
         C = np.zeros(self.maxJ + 1, dtype=complex)
         suma = 0
-        for j in range(max(abs(m), 1), self.maxJ+1):
+        for j in range(max(abs(self.mz), 1), self.maxJ+1):
             C[j] = scipy.integrate.trapezoid(
                 np.sin(theta) *
-                self.f * np.exp(-1j * wn * self.f) *
+                self.f * np.exp(-1j * self.wn * self.f) *
                 np.sqrt(2 * np.pi) *
                 np.sqrt(self.n_lens * np.cos(theta)) *
                 beamfac *
-                self.d_jmp(j, m, p, theta), theta
+                self.d_jmp(j, self.mz, self.p, theta), theta
             )
             suma += np.abs(C[j])**2 * (2 * j + 1)
         
         return C, lensInt, suma
     
-    def plot_Cjl(self, l, p, q):
-        m = l + p
-        C, lensInt, suma = self.C_jlp(l, p, q)
-        
-        print("The (2j+1)Cjm_z normalization yields %.6f" % suma)
-        print("The LG integral on the aplanatic lens surface is %.3f\n" % lensInt)
+    def plot_Cjl(self):
         
         fig, ax = plt.subplots(1, 1, figsize=(8, 6))
-        ax.bar(np.arange(0, len(C)), np.abs(C)**2, label='mz = %d NA=%.1f' % (m, self.NA), alpha=0.7)
+        ax.bar(np.arange(0, len(self.C)), np.abs(self.C)**2, label='mz = %d NA=%.1f' % (self.m, self.NA), alpha=0.7)
         
         ax.set_ylabel(r"$\mathbf{|C_{jm_zp}|}^2$", fontsize=30)
         ax.set_xlabel('j', fontsize=30)
