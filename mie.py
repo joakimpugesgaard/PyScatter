@@ -1,0 +1,87 @@
+import numpy as np
+import scipy.special as sp
+
+
+class glmt:
+    def __init__(self, maxJ, wl, nr, x, mu=1, mu1=1):
+        self.nr = nr
+        self.maxJ = maxJ
+        self.wl = wl
+        self.x = x  # size parameter
+        self.mu = mu
+        self.mu1 = mu1
+        # test maxJ is correct
+        if maxJ < 0:
+            raise ValueError("maxJ must be greater than or equal to 0")
+        # test wl is correct
+
+        # Ensure no element in wl, nr, or R is negative
+        if np.any(np.array(wl) <= 0):
+            raise ValueError("All elements in wl must be greater than 0")
+        if np.any(np.array(nr) <= 0):
+            raise ValueError("All elements in nr must be greater than 0")
+        if np.any(np.array(x) <= 0):
+            raise ValueError("All elements in R must be greater than 0")
+        
+        self.k = 2 * np.pi / self.wl
+ 
+        # prepare meshgrid of nr and R
+        self.NR, self.X = np.meshgrid(self.nr, self.x)
+
+        # Precompute spherical Bessel and Hankel functions
+        self.bx = [sp.spherical_jn(j, self.X) for j in range(maxJ + 1)]
+        self.dbx = [sp.spherical_jn(j, self.X, True) for j in range(maxJ + 1)]
+        self.bnr = [sp.spherical_jn(j, self.NR * self.X) for j in range(maxJ + 1)]
+        self.dbnr = [sp.spherical_jn(j, self.NR * self.X, True) for j in range(maxJ + 1)]
+        self.hx = [self.hankel(j, self.X) for j in range(maxJ + 1)]
+        self.dhx = [self.hankel(j, self.X, True) for j in range(maxJ + 1)]
+
+    def a_j(self):
+        a = np.zeros((self.maxJ+1, np.shape(self.X)[0], np.shape(self.X)[1]), dtype=complex)
+        for jj in range(self.maxJ+1):
+            term1 = self.mu * self.NR**2 * self.bnr[jj] * (self.bx[jj] + self.X * self.dbx[jj])
+            term2 = self.mu1 * self.bx[jj] * (self.bnr[jj] + self.NR * self.X * self.dbnr[jj])
+            term3 = self.mu * self.NR**2 * self.bnr[jj] * (self.hx[jj] + self.X * self.dhx[jj])
+            term4 = self.mu1 * self.hx[jj] * (self.bnr[jj] + self.NR * self.X * self.dbnr[jj])
+            a[jj, :, :] = (term1 - term2) / (term3 - term4)
+        return a
+
+    def b_j(self):
+        b = np.zeros((self.maxJ+1, np.shape(self.X)[0], np.shape(self.X)[1]), dtype=complex)
+        for jj in range(self.maxJ+1):
+            term1 = self.mu1 * self.bnr[jj] * (self.bx[jj] + self.X * self.dbx[jj])
+            term2 = self.mu * self.bx[jj] * (self.bnr[jj] + self.NR * self.X * self.dbnr[jj])
+            term3 = self.mu1 * self.bnr[jj] * (self.hx[jj] + self.X * self.dhx[jj])
+            term4 = self.mu * self.hx[jj] * (self.bnr[jj] + self.NR * self.X * self.dbnr[jj])
+            b[jj, :, :] = (term1 - term2) / (term3 - term4)
+        return b
+
+    def c_j(self):
+        c = np.zeros((self.maxJ+1, np.shape(self.X)[0], np.shape(self.X)[1]), dtype=complex)
+        for jj in range(self.maxJ+1):
+            term1 = self.mu1 * self.bx[jj] * (self.hx[jj] + self.X * self.dhx[jj])
+            term2 = self.mu1 * self.hx[jj] * (self.bx[jj] + self.X * self.dbx[jj])
+            term3 = self.mu1 * self.bnr[jj] * (self.hx[jj] + self.X * self.dhx[jj])
+            term4 = self.mu * self.hx[jj] * (self.bnr[jj] + self.NR * self.X * self.dbnr[jj])
+            c[jj, :, :] = (term1 - term2) / (term3 - term4)
+        return c
+
+    def d_j(self):
+        d = np.zeros((self.maxJ+1, np.shape(self.X)[0], np.shape(self.X)[1]), dtype=complex)
+        for jj in range(self.maxJ+1):
+            term1 = self.mu1 * self.NR * self.bx[jj] * (self.hx[jj] + self.X * self.dhx[jj])
+            term2 = self.mu1 * self.NR * self.hx[jj] * (self.bx[jj] + self.X * self.dbx[jj])
+            term3 = self.mu * self.NR**2 * self.bnr[jj] * (self.hx[jj] + self.X * self.dhx[jj])
+            term4 = self.mu1 * self.hx[jj] * (self.bnr[jj] + self.NR * self.X * self.dbnr[jj])
+            d[jj, :, :] = (term1 - term2) / (term3 - term4)
+        return d
+
+    def hankel(self, n, x, derivative=False):
+        # Returns the spherical hankel function of the first kind or its derivative
+        if not derivative:
+            return sp.spherical_jn(n, x) + 1j * sp.spherical_yn(n, x)
+        else:
+            return sp.spherical_jn(n, x, derivative=True) + 1j * sp.spherical_yn(n, x, derivative=True)
+    
+    
+    

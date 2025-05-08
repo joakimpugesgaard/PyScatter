@@ -21,7 +21,7 @@ class domain:
     cart_grid: Create a grid in cartesian coordinates
     spherical_grid: Convert cartesian grids to spherical coordinates
     show_coord: Plot the desired coordinate in the desired plane
-    
+
     """
     
     

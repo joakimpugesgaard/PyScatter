@@ -35,9 +35,10 @@ params = {
 plt.rcParams.update(params)
 
 class Multipoles:
-    def __init__(self, l_max, m_max, wl, domain, nr = 1):
+    def __init__(self, l_max, m_max, wl, domain, nr = 1, radius = None):
         self.l_max = l_max
         self.m_max = m_max
+        
         #initialize available l and m values
         self.lvals = np.arange(0, l_max + 1)
         self.mvals = np.arange(-l_max, l_max + 1)
@@ -62,6 +63,23 @@ class Multipoles:
         
         self.Leg = self.get_Legendre(l_max+1, m_max+1, np.cos(self.Theta))
         self.dLeg = self.get_Legendre(l_max+1, m_max+1, np.cos(self.Theta), diff = True)
+        
+        if not radius:
+            self.rr = 0.25 * self.R.max() # Define the radius of the sphere
+        else:
+            self.rr = radius
+        
+        # Initialize SCA and ABS arrays with ones, same shape as R
+        self.SCA = np.ones_like(self.R)
+        self.ABS = np.ones_like(self.R)
+        
+        # Find indices where values are less than or greater than rr
+        index1 = np.where(self.R < self.rr)
+        index2 = np.where(self.R > self.rr)
+
+        # Set values in ABS and SCA arrays based on indices
+        self.ABS[index2] = 0
+        self.SCA[index1] = 0
         
         
     @staticmethod
@@ -249,11 +267,15 @@ class Multipoles:
         
         # Define the spatial function based on the input
         if spatial_fun == "hankel":
-            spatial_func = lambda l, x: self.hankel(l, self.nr * x)
+            spatial_func = lambda l, x: self.hankel(l, x)
         elif spatial_fun == "bessel":
-            spatial_func = lambda l, x: sp.spherical_jn(l, x)
+            spatial_func = lambda l, x: sp.spherical_jn(l, self.nr*x)
+        elif spatial_fun == "both":
+            spatial_func = lambda l, x: self.SCA*self.hankel(l, x) + self.ABS * sp.spherical_jn(l, self.nr*x)
+        elif callable(spatial_fun):
+            spatial_func = spatial_fun
         else:
-            raise ValueError("spatial_fun must be 'hankel' or 'bessel'")
+            raise ValueError("spatial_fun must be 'hankel', 'bessel', 'both', or a callable function")      
 
         # Vectorized computation
         Ap1, A01, Am1 = self.vsh(l, l, m, self.Theta, self.Phi)
@@ -295,26 +317,12 @@ class Multipoles:
         assert interaction in ["scattering", "internal"], "interaction must be 'scattering' or 'internal'"
         assert plot in ["components", "total"], "plot must be 'components' or 'total'"
         
-        rr = 0.25 * self.R.max() # Define the radius of the sphere
-        
-        # Initialize SCA and ABS arrays with ones, same shape as R
-        SCA = np.ones_like(self.R)
-        ABS = np.ones_like(self.R)
-        
-        # Find indices where values are less than or greater than rr
-        index1 = np.where(self.R < rr)
-        index2 = np.where(self.R > rr)
-
-        # Set values in ABS and SCA arrays based on indices
-        ABS[index2] = 0
-        SCA[index1] = 0
-        
         if interaction == "scattering":
             spatial_fun = "hankel"
-            S = SCA
+            S = self.SCA
         elif interaction == "internal":
             spatial_fun = "bessel"
-            S = ABS
+            S = self.ABS
         else:
             raise ValueError("type must be 'scattering' or 'internal'")
         
