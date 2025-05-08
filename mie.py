@@ -44,7 +44,7 @@ class glmt:
             term3 = self.mu * self.NR**2 * self.bnr[jj] * (self.hx[jj] + self.X * self.dhx[jj])
             term4 = self.mu1 * self.hx[jj] * (self.bnr[jj] + self.NR * self.X * self.dbnr[jj])
             a[jj, :, :] = (term1 - term2) / (term3 - term4)
-        return a
+        return a.squeeze()
 
     def b_j(self):
         b = np.zeros((self.maxJ+1, np.shape(self.X)[0], np.shape(self.X)[1]), dtype=complex)
@@ -54,7 +54,7 @@ class glmt:
             term3 = self.mu1 * self.bnr[jj] * (self.hx[jj] + self.X * self.dhx[jj])
             term4 = self.mu * self.hx[jj] * (self.bnr[jj] + self.NR * self.X * self.dbnr[jj])
             b[jj, :, :] = (term1 - term2) / (term3 - term4)
-        return b
+        return b.squeeze()
 
     def c_j(self):
         c = np.zeros((self.maxJ+1, np.shape(self.X)[0], np.shape(self.X)[1]), dtype=complex)
@@ -64,7 +64,7 @@ class glmt:
             term3 = self.mu1 * self.bnr[jj] * (self.hx[jj] + self.X * self.dhx[jj])
             term4 = self.mu * self.hx[jj] * (self.bnr[jj] + self.NR * self.X * self.dbnr[jj])
             c[jj, :, :] = (term1 - term2) / (term3 - term4)
-        return c
+        return c.squeeze()
 
     def d_j(self):
         d = np.zeros((self.maxJ+1, np.shape(self.X)[0], np.shape(self.X)[1]), dtype=complex)
@@ -74,7 +74,7 @@ class glmt:
             term3 = self.mu * self.NR**2 * self.bnr[jj] * (self.hx[jj] + self.X * self.dhx[jj])
             term4 = self.mu1 * self.hx[jj] * (self.bnr[jj] + self.NR * self.X * self.dbnr[jj])
             d[jj, :, :] = (term1 - term2) / (term3 - term4)
-        return d
+        return d.squeeze()
 
     def hankel(self, n, x, derivative=False):
         # Returns the spherical hankel function of the first kind or its derivative
