@@ -58,7 +58,7 @@ class BeamDisplacement:
             raise ValueError("Input array must have shape (3,)")
         if np.linalg.norm(d) == 0:
             print("Displacement is zero")
-            return 0, 0, 0
+            return 0, np.pi/2, 0
         mag = np.linalg.norm(d)
         d = d / mag
         theta = np.arccos(d[2])
@@ -266,20 +266,24 @@ class BeamDisplacement:
             elif basis == "mx":
                 C_on = self.C_on_to_mx()
 
-        C_off_mx_transposed = C_off.T
+        C_off_transposed = C_off.T
 
-        colors = plt.cm.tab20(np.linspace(0, 1, C_off_mx_transposed.shape[0]))
+        # Define a unique color for each value in the histogram using the tab20 colormap
+        # Generate 51 distinct colors with minimal similarity between neighbors
+        colors = plt.cm.tab20(np.linspace(0, 1, 51))
+        np.random.seed(35)  
+        np.random.shuffle(colors)
 
         ax[0].bar(
-            np.arange(1, C_off_mx_transposed.shape[1] + 1),
-            np.abs(C_off_mx_transposed[0])**2,
+            np.arange(1, C_off_transposed.shape[1] + 1),
+            np.abs(C_off_transposed[0])**2,
             color=colors[0]
         )
-        for i in range(1, C_off_mx_transposed.shape[0]):
+        for i in range(1, C_off_transposed.shape[0]):
             ax[0].bar(
-            np.arange(1, C_off_mx_transposed.shape[1] + 1),
-            np.abs(C_off_mx_transposed[i])**2,
-            bottom=np.sum(np.abs(C_off_mx_transposed[:i])**2, axis=0),
+            np.arange(1, C_off_transposed.shape[1] + 1),
+            np.abs(C_off_transposed[i])**2,
+            bottom=np.sum(np.abs(C_off_transposed[:i])**2, axis=0),
             color=colors[i]
             )
 
@@ -304,7 +308,7 @@ class BeamDisplacement:
                 color=colors_on_mx[i]
             )
 
-        ax[1].set_title(f"C_off Stacked Histogram in basis {basis}", fontsize=15)
+        ax[1].set_title(f"C_on Stacked Histogram in basis {basis}", fontsize=15)
         ax[1].set_xlabel('j', fontsize=15)
         ax[1].set_ylabel(r"$\mathbf{|C^{on}_{jm_zp}|}^2$", fontsize=15)
 
