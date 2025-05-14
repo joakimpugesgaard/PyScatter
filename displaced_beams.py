@@ -5,10 +5,9 @@ from focused_beams_class import *
 from Multipoles import *
 
 class BeamDisplacement:
-    def __init__(self, domain, d = np.array([0, 1, 0]), wl=0.632, p=1, jmax=90, NA=0.9, f=1000, n_lens=1):
+    def __init__(self, domain, d = np.array([0, 1, 0]), wl=0.632, p=1, jmax=50, NA=0.9, f=1000, n_lens=1):
         self.wl = wl
         self.d = d
-        self.process_d(d)
         self.p = p
         self.jmax = jmax
         self.k = 2 * np.pi / wl
@@ -17,17 +16,31 @@ class BeamDisplacement:
         self.planes = self.spherical_grids.keys()
         self.R = np.array([self.spherical_grids[plane][0] for plane in self.planes])
         self.focused_beam = focused_beams("LaguerreGauss", jmax, wl, domain, p=self.p, NA=NA, f=f, n_lens=n_lens)
+
         self.mpoles = Multipoles(l_max = jmax, m_max = jmax, wl = wl, domain = domain)
         self.C_on = self.focused_beam.C
         self.mz_star = self.focused_beam.mz
-        
+     
         self.CG1, self.CG2 = self.load_or_compute_CGs()
         
         self.mag, self.theta, self.phi = self.process_d(d)
 
+        self.beam_params = {
+            "type": "displaced",
+            "d": d,
+            "wl": wl,
+            'mz_star': self.mz_star,
+            "p": p,
+            "maxJ": jmax,
+            "NA": NA,
+            "f": f,
+            "n_lens": n_lens
+        }
+
+        
     def load_or_compute_CGs(self):
         try:
-            data = np.load('CG1_CG2.npz')
+            data = np.load('CG1_CG2 copy.npz')
             CG1 = data['CG1']
             CG2 = data['CG2']
             print("Loaded CG1 and CG2 from file.")
@@ -172,49 +185,92 @@ class BeamDisplacement:
         return w
     
     def compute_C_off(self):
-        Lvals = np.arange(0, self.jmax + 1)
-        gjmp = np.zeros((self.jmax - (self.mz_star - 1), self.jmax, 2 * self.jmax + 1), dtype=np.complex128)
+        """
+        Compute C^off as a 2D array with:
+        - j from 0 to j_max (axis 1)
+        - m_z from -j_max to j_max (axis 2)
 
-        if self.theta == 0:
+        Parameters:
+        - j_max: Maximum j value
+        - mz_star: Fixed m_z* value
+        - k: Wavevector magnitude
+        - d: Displacement vector (numpy array with shape (3,))
+        - C_on: Known C^on values (1D array, indexed by j')
+
+        Returns:
+        - C_off: 2D array of shape (j_max+1, 2*j_max+1)
+        """
+        # Process displacement vector into spherical coordinates
+        mag, theta, phi = self.process_d(self.d)
+
+        # Initialize Lvals
+        Lvals = np.arange(0, self.jmax)
+        gjmp = np.zeros((self.jmax - self.mz_star + 1, self.jmax, 2 * self.jmax + 1), dtype=np.complex128)  # Initialize gjmp array
+        
+        # Use simpler expression for displacement along z
+        if theta == 0:
+            # Outer loop over j'
             for j_prime in range(max(abs(self.mz_star), 1), self.jmax + 1):
-                for j in range(1, self.jmax + 1):
+                for j in range(1, self.jmax + 1):  # Outer loop over j (start from 1 to match MATLAB)
                     n1 = 0
                     for m_z in range(j, -j - 1, -1):
-                        Lfac = (2 * Lvals + 1) * (-1j)**Lvals * self.get_Jl(Lvals, self.k * self.mag)
-                        gjmpi = (Lfac[:, None] *
-                                 ((self.CG1[j, Lvals, j_prime, 0:2*min(j, j_prime)+1].conj().squeeze()) *
-                                  self.CG2[j, Lvals, j_prime][:, None]))
+                        Lfac = (2 * Lvals + 1) * (-1j)**Lvals * self.get_Jl(Lvals, self.k * mag)
+
+                        # Compute gjmpi factor
+                        gjmpi = (Lfac[:, None] * 
+                                ((self.CG1[j, Lvals, j_prime, 0:2 * min(j, j_prime) + 1].conj().squeeze()) * self.CG2[j, Lvals, j_prime][:, None])
+                            )  # Shape (2*mz+1, jmax+1)
+            
+                        # Compute Wigner matrix products (corresponding to AA and BB terms in MATLAB)
                         gjmp[j_prime - self.mz_star, j - 1, n1] = np.sum(np.conj(np.sum(gjmpi, axis=0).T), axis=0)
+
                         n1 += 1
+        
         else:
+            # Calculate the Wigner D matrices for each j
             D_matrices = []
+            
             for jj in range(1, self.jmax + 1):
                 size = 2 * jj + 1
                 D_mat = np.zeros((size, size), dtype=complex)
+
                 for m_idx, m in enumerate(range(-jj, jj + 1)):
                     for n_idx, n in enumerate(range(-jj, jj + 1)):
-                        D_mat[m_idx, n_idx] = self.D_jmp(jj, m, n, self.phi, self.theta, 0)
-                D_matrices.append(D_mat)
-
+                        D_mat[m_idx, n_idx] = self.D_jmp(jj, m, n, phi, theta, 0)
+                
+                D_matrices.append(D_mat)  # Each element is a matrix of size (2*jj+1, 2*jj+1)
+                
+            printc = 0
+            # Outer loop over j'
             for j_prime in range(max(abs(self.mz_star), 1), self.jmax + 1):
+                printc += 1
                 A = D_matrices[j_prime - 1]
-                ii2 = j_prime - self.mz_star
-                for j in range(1, self.jmax + 1):
+                ii2 = j_prime - self.mz_star  # Adjust indexing
+                for j in range(1, self.jmax + 1):  # Outer loop over j (start from 1 to match MATLAB)
                     B = D_matrices[j - 1]
                     n1 = 0
-                    nn = np.arange(-min(j, j_prime), min(j, j_prime) + 1)
-                    for m_z in range(j, -j - 1, -1):
-                        Lfac = (2 * Lvals + 1) * (-1j)**Lvals * self.get_Jl(Lvals, self.k * self.mag)
-                        gjmpi = (Lfac[:, None] *
-                                 ((self.CG1[j, Lvals, j_prime, 0:2*min(j, j_prime)+1].conj().squeeze()) *
-                                  self.CG2[j, Lvals, j_prime][:, None]))
-                        ii3 = j - m_z
-                        DJ = A[ii2, j_prime - nn]
-                        DJp = B[ii3, j - nn]
-                        gjmp[j_prime - self.mz_star, j - 1, n1] = np.sum((np.conj(np.sum(gjmpi, axis=0).T * DJ.conj() * DJp)), axis=0)
-                        n1 += 1
 
-        Gjmp = np.sum((self.C_on.conj())[1:, None, None] * gjmp, axis=0)
+                    nn = np.arange(-min(j, j_prime), min(j, j_prime) + 1) 
+                    for m_z in range(j, -j - 1, -1):
+                        Lfac = (2 * Lvals + 1) * (-1j)**Lvals * self.get_Jl(Lvals, self.k * mag)
+
+                        # Compute gjmpi factor
+                        gjmpi = (Lfac[:, None] * 
+                                ((self.CG1[j, Lvals, j_prime, 0:2 * min(j, j_prime) + 1].conj().squeeze()) * self.CG2[j, Lvals, j_prime][:, None])
+                            )  # Shape (2*mz+1, jmax+1)
+                        
+                        
+                        ii3 = j - m_z  # Adjust indexing
+                        nn = np.arange(-min(j, j_prime), min(j, j_prime) + 1)  
+                        DJ = A[ii2, j_prime - nn]  # Shape (2*jmax+1,)
+                        DJp = B[ii3, j - nn] 
+
+            
+                        # Compute Wigner matrix products (corresponding to AA and BB terms in MATLAB)
+                        gjmp[j_prime - self.mz_star, j - 1, n1] = np.sum((np.sum(gjmpi, axis=0).T).conj() * DJ.conj() * DJp, axis=0) 
+                        n1 += 1
+        
+        Gjmp = np.sum((self.C_on.conj())[1:, None, None] * gjmp[:, :, :], axis=0)  # Shape (jmax, 2*jmax+1)
         return Gjmp
 
     def C_off_to_mx(self, C_off_mz = None):
@@ -270,7 +326,7 @@ class BeamDisplacement:
 
         # Define a unique color for each value in the histogram using the tab20 colormap
         # Generate 51 distinct colors with minimal similarity between neighbors
-        colors = plt.cm.tab20(np.linspace(0, 1, 51))
+        colors = plt.cm.tab20(np.linspace(0, 1, 2* self.jmax+10))
         np.random.seed(35)  
         np.random.shuffle(colors)
 
@@ -330,12 +386,13 @@ class BeamDisplacement:
         mp0["electric"] *= 0
 
         for j in range(j0, self.jmax):
+            nn = 0
             for m in range(-j, j + 1):
                 mp = self.mpoles.get_multipoles(j, m, spatial_fun)
 
-                mp0["magnetic"] += (1j) ** j * np.sqrt(2 * j + 1) * Gjmp[j, m] * mp["magnetic"]
-                mp0["electric"] += (1j) ** j * np.sqrt(2 * j + 1) * Gjmp[j, m] * mp["electric"]
-
+                mp0["magnetic"] += (1j) ** j * np.sqrt(2 * j + 1) * Gjmp[j, nn] * mp["magnetic"]
+                mp0["electric"] += (1j) ** j * np.sqrt(2 * j + 1) * Gjmp[j, nn] * mp["electric"]
+                nn += 1
         sum = mp0["magnetic"] + (1j) * self.p * mp0["electric"]
     
         return sum
@@ -387,7 +444,9 @@ class BeamDisplacement:
         else:
             raise ValueError("interaction must be 'scattering' or 'internal'")
         if sum is None:
-            sum = self.compute_sum()
+            spatial_fun = "bessel"
+            S = np.ones_like(self.R)
+            sum = self.compute_sum(spatial_fun=spatial_fun)
         else:
             sum = sum
         
@@ -404,7 +463,7 @@ class BeamDisplacement:
             else:
                 norm = None
                 
-            fig.suptitle(f'Computed Sum (l={self.mz_star-self.p}, p={self.p}, q={0})', fontsize=24, fontweight='bold')
+            fig.suptitle(f'Intensity d = {self.mag} µm', fontsize=24, fontweight='bold')
             for i, plane in enumerate(self.planes):
 
                 im0 = axs[i, 0].imshow(np.abs(sum[0][i]).T, extent=(-self.size, self.size, -self.size, self.size), origin='lower', cmap='hot', norm=norm)  
@@ -452,7 +511,7 @@ class BeamDisplacement:
             else:
                 norm = None
 
-            fig.suptitle(f'Total Intensity (l={self.mz_star-self.p}, p={self.p}, q={0})', fontsize=24, fontweight='bold')
+            fig.suptitle(f'Total Intensity (d = {self.mag} µm)', fontsize=24, fontweight='bold')
             for i, plane in enumerate(self.planes):
                 im = axs[i].imshow(total_intensity[i].T, extent=(-self.size, self.size, -self.size, self.size), origin='lower', cmap='hot', norm=norm)
                 axs[i].set_title(f'{plane} plane')
