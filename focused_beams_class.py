@@ -9,8 +9,8 @@ import mpl_toolkits.mplot3d.axes3d as axes3d
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 class focused_beams(Multipoles):
-    def __init__(self, type, maxJ, wl, domain, p = 1, l = 0, q = 0, nr=1, NA=0.9, f=1000, n_lens = 1):
-        super().__init__(maxJ, maxJ, wl, domain, nr)
+    def __init__(self, type, maxJ, wl, domain, p = 1, l = 0, q = 0, nr=1, radius = 0.25, NA=0.9, f=1000, n_lens = 1):
+        super().__init__(maxJ, maxJ, wl, domain, nr, radius)
         self.NA = NA
         self.f = f
         self.wn = 2 * np.pi / wl
@@ -21,11 +21,27 @@ class focused_beams(Multipoles):
         self.planes = self.spherical_grids.keys()
         self.n_lens = n_lens
         self.maxJ = maxJ
+        if p not in [-1,1]:
+            raise ValueError("p must be either -1 or 1")
         self.p = p
         self.l = l
         self.q = q
         self.mz = l + p
         self.wl = wl
+        # Initialize beam parameters dictionary
+        self.beam_params = {
+            'type': "focused",
+            'q': self.q,
+            'l': self.l,
+            'p': self.p,
+            'wl': self.wl,
+            'mz_star': self.mz,
+            'maxJ': self.maxJ,
+            'nr': self.nr,
+            'NA': self.NA,
+            'f': self.f,
+            'n_lens': self.n_lens
+        }
         
         # initialize arrays of spherical coordinates. shape = (Nplanes, shape(grid))
         self.R = np.array([self.spherical_grids[plane][0] for plane in self.planes])
@@ -74,53 +90,81 @@ class focused_beams(Multipoles):
         
         return d_jmp
 
-    def C_jlp(self):
-        assert self.maxJ >= abs(self.l)+self.p, "maxJ must be greater than or equal to abs(l)+p"
+    def C_jlp(self, l = None, p = None, q = None):
+        
+        if l is None:
+            l = self.l
+        if p is None:
+            p = self.p
+        if q is None:
+            q = self.q
+            
+        if p not in [-1,1]:
+            raise ValueError("p must be either -1 or 1")
+        
+        mz = l + p
+        
+        assert self.maxJ >= abs(l)+p, "maxJ must be greater than or equal to abs(l)+p"
         
         theta_max = np.arcsin(self.NA / self.n_lens)  # maximum half angle
         theta = np.linspace(0.0001, theta_max, 250)
         
         # Generalize beam calculation
         beam_params = {
-            'q': self.q,
-            'l': self.l,
+            'q': q,
+            'l': l,
             'rho': self.f * np.sin(theta),
             'z': self.f
         }
+        
         beamfac = self.beam(**beam_params)
-        
-        
-        #LG = self.beam(q, l, w, wl, z0, f * np.sin(theta), f)
         
         lensInt = scipy.integrate.trapezoid(self.f**2 * 2 * np.pi * np.sin(theta) * np.cos(theta) * (beamfac**2), theta)
         
         C = np.zeros(self.maxJ + 1, dtype=complex)
         suma = 0
-        for j in range(max(abs(self.mz), 1), self.maxJ+1):
+        for j in range(max(abs(mz), 1), self.maxJ+1):
             C[j] = scipy.integrate.trapezoid(
                 np.sin(theta) *
                 self.f * np.exp(-1j * self.wn * self.f) *
                 np.sqrt(2 * np.pi) *
                 np.sqrt(self.n_lens * np.cos(theta)) *
                 beamfac *
-                self.d_jmp(j, self.mz, self.p, theta), theta
+                self.d_jmp(j, mz, p, theta), theta
             )
             suma += np.abs(C[j])**2 * (2 * j + 1)
         
         return C, lensInt, suma
     
-    def plot_Cjl(self):
+    def plot_Cjl(self, l=None, p=None, q=None):
+        if l is None:
+            l = [self.l]
+        if p is None:
+            p = [self.p]
+        if q is None:
+            q = [self.q]
         
         fig, ax = plt.subplots(1, 1, figsize=(8, 6))
-        ax.bar(np.arange(0, len(self.C)), np.abs(self.C)**2, label='mz = %d NA=%.1f' % (self.m, self.NA), alpha=0.7)
-        
+        colors = plt.cm.viridis(np.linspace(0, 1, len(l) * len(p) * len(q)))
+        color_idx = 0
+
+        for l_val in l:
+            for p_val in p:
+                for q_val in q:
+                    # Compute C for each combination
+                    C, lensInt, suma = self.C_jlp(l=l_val, p=p_val, q=q_val)
+                    label = f"mz={l_val + p_val}, NA={self.NA:.1f}, l={l_val}, p={p_val}, q={q_val}"
+                    ax.bar(np.arange(0, len(C)), np.abs(C)**2, 
+                    label=label, alpha=0.6)#, color=colors[color_idx])
+                    color_idx += 1
+
         ax.set_ylabel(r"$\mathbf{|C_{jm_zp}|}^2$", fontsize=30)
         ax.set_xlabel('j', fontsize=30)
         ax.set_xlim(0, self.maxJ)
         ax.set_xticks(range(0, self.maxJ + 1, 2))  # Set x-ticks to increase in steps of 2
-        ax.legend(fontsize=20)
+        ax.legend(fontsize=12)
         ax.tick_params(axis='both', which='major', labelsize=20)
-        
+
         fig.tight_layout()
         plt.show()
     
@@ -178,9 +222,6 @@ class focused_beams(Multipoles):
     
     
     def compute_sum(self, l, p, q, spatial_fun = "bessel"):
-        C, lensInt, suma = self.C_jlp(l, p, q)
-        #print("The (2j+1)Cjm_z normalization yields %.3f" % suma)
-        #print("The LG integral on the aplanatic lens surface is %.3f" % lensInt)
         
         m = l + p
         
@@ -188,20 +229,20 @@ class focused_beams(Multipoles):
 
         mp0 = self.get_multipoles(j0, m, spatial_fun)
 
-        mp0["magnetic"] *= C[j0]*(1j)**j0 * np.sqrt(2*j0+1)
-        mp0["electric"] *= C[j0]*(1j)**j0 * np.sqrt(2*j0+1)
+        mp0["magnetic"] *= self.C[j0]*(1j)**j0 * np.sqrt(2*j0+1)
+        mp0["electric"] *= self.C[j0]*(1j)**j0 * np.sqrt(2*j0+1)
 
         for j in range(j0+1, self.maxJ+1):
             mp = self.get_multipoles(j, m, spatial_fun)
             
-            mp0["magnetic"] += (1j)**j * np.sqrt(2*j+1) * C[j] * mp["magnetic"]
-            mp0["electric"] += (1j)**j * np.sqrt(2*j+1) * C[j] * mp["electric"]
+            mp0["magnetic"] += (1j)**j * np.sqrt(2*j+1) * self.C[j] * mp["magnetic"]
+            mp0["electric"] += (1j)**j * np.sqrt(2*j+1) * self.C[j] * mp["electric"]
 
         sum = mp0["magnetic"]+(1j)*p*mp0["electric"]
 
         return sum
 
-    def plot_beam(self, l, p, q, interaction="scattering", plot="components", globalnorm=False):
+    def plot_beam(self, l=None, p=None, q=None, interaction="scattering", plot="components", globalnorm=False):
         """Plot the computed sum of multipoles.
 
         Args:
@@ -248,7 +289,16 @@ class focused_beams(Multipoles):
         else:
             raise ValueError("interaction must be 'scattering' or 'internal'")
         
-        sum = self.compute_sum(l, p, q, spatial_fun)
+        if  (l is not None) or (p is not None) or (q is not None):
+            if p not in [-1,1]:
+                raise ValueError("p must be either -1 or 1")
+            # If l, p, q are provided, set new C
+            self.l = l
+            self.p = p
+            self.q = q
+            self.C, self.lensInt, self.suma = self.C_jlp(l=l, p=p, q=q)
+
+        sum = self.compute_sum(self.l, self.p, self.q, spatial_fun)
         
         if plot == "components":
             # Plot Nself.planes x 3 subplots
@@ -263,7 +313,7 @@ class focused_beams(Multipoles):
             else:
                 norm = None
                 
-            fig.suptitle(f'Computed Sum (l={l}, p={p}, q={q})', fontsize=24, fontweight='bold')
+            fig.suptitle(f'Computed Sum (l={self.l}, p={self.p}, q={self.q})', fontsize=24, fontweight='bold')
             for i, plane in enumerate(self.planes):
 
                 im0 = axs[i, 0].imshow(np.abs(sum[0][i]).T, extent=(-self.size, self.size, -self.size, self.size), origin='lower', cmap='hot', norm=norm)  
@@ -311,7 +361,7 @@ class focused_beams(Multipoles):
             else:
                 norm = None
 
-            fig.suptitle(f'Total Intensity (l={l}, p={p}, q={q})', fontsize=24, fontweight='bold')
+            fig.suptitle(f'Total Intensity (l={self.l}, p={self.p}, q={self.q})', fontsize=24, fontweight='bold')
             for i, plane in enumerate(self.planes):
                 im = axs[i].imshow(total_intensity[i].T, extent=(-self.size, self.size, -self.size, self.size), origin='lower', cmap='hot', norm=norm)
                 axs[i].set_title(f'{plane} plane')
