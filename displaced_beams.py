@@ -385,13 +385,13 @@ class BeamDisplacement:
         mp0["magnetic"] *= 0
         mp0["electric"] *= 0
 
-        for j in range(j0, self.jmax):
+        for j in range(j0, np.shape(Gjmp)[0]):
             nn = 0
-            for m in range(-j, j + 1):
+            for m in range(j, -j - 1, -1):
                 mp = self.mpoles.get_multipoles(j, m, spatial_fun)
 
-                mp0["magnetic"] += (1j) ** j * np.sqrt(2 * j + 1) * Gjmp[j, nn] * mp["magnetic"]
-                mp0["electric"] += (1j) ** j * np.sqrt(2 * j + 1) * Gjmp[j, nn] * mp["electric"]
+                mp0["magnetic"] += (1j) ** j * np.sqrt(2 * j + 1) * Gjmp[j-1, nn] * mp["magnetic"]
+                mp0["electric"] += (1j) ** j * np.sqrt(2 * j + 1) * Gjmp[j-1, nn] * mp["electric"]
                 nn += 1
         sum = mp0["magnetic"] + (1j) * self.p * mp0["electric"]
     
@@ -509,6 +509,7 @@ class BeamDisplacement:
                 vmax = np.max(total_intensity)
                 norm = mcolors.Normalize(vmin=vmin, vmax=vmax)
             else:
+                
                 norm = None
 
             fig.suptitle(f'Total Intensity (d = {self.mag} µm)', fontsize=24, fontweight='bold')
