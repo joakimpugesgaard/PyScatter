@@ -12,6 +12,7 @@ class glmt:
         self.mu1 = mu1
         # test maxJ is correct
         if maxJ < 0:
+            
             raise ValueError("maxJ must be greater than or equal to 0")
         # test wl is correct
 
@@ -28,13 +29,20 @@ class glmt:
         # prepare meshgrid of nr and R
         self.NR, self.X = np.meshgrid(self.nr, self.x)
 
-        # Precompute spherical Bessel and Hankel functions
-        self.bx = [sp.spherical_jn(j, self.X) for j in range(maxJ + 1)]
-        self.dbx = [sp.spherical_jn(j, self.X, True) for j in range(maxJ + 1)]
-        self.bnr = [sp.spherical_jn(j, self.NR * self.X) for j in range(maxJ + 1)]
-        self.dbnr = [sp.spherical_jn(j, self.NR * self.X, True) for j in range(maxJ + 1)]
-        self.hx = [self.hankel(j, self.X) for j in range(maxJ + 1)]
-        self.dhx = [self.hankel(j, self.X, True) for j in range(maxJ + 1)]
+        # Precompute spherical Bessel and Hankel functions in a single loop for efficiency
+        self.bx = []
+        self.dbx = []
+        self.bnr = []
+        self.dbnr = []
+        self.hx = []
+        self.dhx = []
+        for j in range(maxJ + 1):
+            self.bx.append(sp.spherical_jn(j, self.X))
+            self.dbx.append(sp.spherical_jn(j, self.X, True))
+            self.bnr.append(sp.spherical_jn(j, self.NR * self.X))
+            self.dbnr.append(sp.spherical_jn(j, self.NR * self.X, True))
+            self.hx.append(self.hankel(j, self.X))
+            self.dhx.append(self.hankel(j, self.X, True))
 
     def a_j(self):
         a = np.zeros((self.maxJ+1, np.shape(self.X)[0], np.shape(self.X)[1]), dtype=complex)
