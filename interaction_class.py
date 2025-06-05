@@ -7,6 +7,7 @@ import mpl_toolkits.mplot3d.axes3d as axes3d
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib import rc
 from focused_beams_class import *
+from planewave import *
 from domain_class import *
 from displaced_beams import *
 from mie import *
@@ -14,6 +15,14 @@ from Multipoles import *
 import numba
 import scipy
 import numba_scipy
+
+print("Numba version:", numba.__version__)
+print("SciPy version:", scipy.__version__)
+print("Numba-Scipy version:", numba_scipy.__version__)
+print("Numpy Version:", np.__version__)
+print("Matplotlib Version", matplotlib.__version__)
+
+
 
 ## Define Standard Units
 fsize = 22
@@ -60,15 +69,15 @@ class interaction(Multipoles):
         
         self.mz_star = self.beam_params["mz_star"]
         self.j0 = max(abs(self.mz_star), 1)
-        self.p = self.beam_params["p"]
-
-        if self.beamtype == "plane":
-            self.C = np.ones((self.maxJ+1, 3))
+        
+        if self.beamtype == "planewave":
+            self.C = np.ones(self.maxJ+1)
         elif self.beamtype == "focused":
+            self.p = self.beam_params["p"]
             self.C = beam.C
         elif self.beamtype == "displaced":
-            self.Gjmp  = beam.compute_C_off()
-            self.C = self.Gjmp            
+            self.p = self.beam_params["p"]
+            self.C = beam.C_off
         else:
             raise ValueError("Beam type not implemented")
         
@@ -182,11 +191,14 @@ class interaction(Multipoles):
             
         return sum
     
-    def getCrossSection(self, type="scattering", **kwargs):
+    def getCrossSection(self, type="scattering", dims = 1, includeParts = False, plot = True, **kwargs):
         """Compute the cross section of the multipoles.
         
         Args:
-            type (str, optional): Type of cross section to compute. Defaults to "scattering".
+            type (str, optional): Type of cross section to compute. Defaults to "scattering". Can also be "internal" or "extinction".
+            dims (int, optional): Number of dimensions of cross-section. Defaults to 1.
+            includeParts (bool, optional): If True, return return a (4, maxJ, dims) matrix containing all multipolar contributions.
+            plot (bool, optional): If True, plot the cross section. Defaults to True.
             **kwargs: Optional parameters to override x, radius, nr, or wl.
 
         Raises:
@@ -195,147 +207,240 @@ class interaction(Multipoles):
         Returns: 
             Array of cross sections for the specified type.
         """
-        # Allow overriding of x, radius, nr, wl via direct arguments 
-        x = kwargs.pop("x", getattr(self, "x", None))
-        radius = kwargs.pop("radius", getattr(self, "rr", None))
-        nr = kwargs.pop("nr", getattr(self, "nr", None))
-        wl = kwargs.pop("wl", getattr(self, "wl", None))
- 
-        # Use self.mie if parameters match, else create new glmt instance
-        if not (self._is_equal(x, getattr(self, "x", None)) and
-            self._is_equal(nr, getattr(self, "nr", None)) and
-            self._is_equal(wl, getattr(self, "wl", None)) and
-            self._is_equal(radius, getattr(self, "rr", None))):
-            k = 2 * np.pi / wl
-            x = k * radius
-            
-            mie = glmt(self.maxJ, wl, np.asarray(nr), x)
-            #calculate mie coefficients
-            a = mie.a_j()
-            b = mie.b_j()
-            c = mie.c_j()
-            d = mie.d_j()
+        glmt_dims = None
+        
+        if dims not in [0, 1, 2]:
+            raise ValueError("dims must be 0, 1 or 2")
+        
+        if  not kwargs:
+            wl = self.wl
+            radius = self.rr
+            x = self.x
+            nr = self.nr
+            xdim = radiusdim = nrdim = wldim = 0
+        
         else:
-            mie = self.mie
-            a = self.a
-            b = self.b
-            c = self.c
-            d = self.d
+            # Check if kwargs contains 'x', 'radius', 'nr', or 'wavelength' and pop them
+            if "x" in kwargs:
+                x = kwargs.pop("x")
+                x = np.asarray(x)  # Ensure x is an array
+            else:
+                x = np.asarray(getattr(self, "x", None))
+            xdim = x.ndim
+            if "radius" in kwargs:
+                radius = kwargs.pop("radius")
+                radius = np.asarray(radius)  # Ensure radius is an array
+            else:
+                radius = np.asarray(getattr(self, "rr", None))
+            radiusdim = radius.ndim
+            if "nr" in kwargs:
+                nr = kwargs.pop("nr")
+                nr = np.asarray(nr)
+            else:
+                nr = np.asarray(getattr(self, "nr", None))
+            nrdim = nr.ndim
+            if "wavelength" in kwargs:
+                wl = kwargs.pop("wavelength")
+                wl = np.asarray(wl)
+            else:
+                wl = np.asarray(getattr(self, "wl", None))
+            wldim = wl.ndim
+ 
+        dimsum = xdim + radiusdim + nrdim + wldim
+        
+        
+        # check if refractive index and wavelength are coupled
+        if ((nrdim == 1) and (wldim == 1)) and (dims == 1):
+            print("Assuming wavelength dependent refractive index.")
+            axis1 = wl
+            axis1label = "Wavelength (µm)"
+            glmt_dims = 1
+            dimsum -= 1
+        elif ((nrdim == 1) and (wldim == 1)) and (dims == 2):
+            print("Assuming independent wavelength and refractive index.")
+            axis1 = wl
+            axis1label = "Wavelength (µm)"
+            axis2 = nr
+            axis2label = "Refractive Index (nr)"
+            
+        # Check if the total number of dimensions matches the expected dimensions
+        if dimsum != dims:
+            raise ValueError("Expected at {} dimensions, got {}.".format(dims, dimsum))
+        if dims == 0:
+            x = np.asarray(x)
+        
+        # Print constant beam parameters
+        self.printConstantBeamParams(x, wl, radius, nr)
+        
+        if (xdim == 1):
+            if ((radiusdim == 1) or (wldim == 1)):
+                dims -= 1
+            else:
+                print("Size parameter provided. Using size parameter for 1D cross section.\n")
+            
+            if radiusdim == 1:
+                if (len(x) != len(radius)):
+                    raise ValueError("Size parameter x must have the same length as radius.")
+                print("Size parameter and radiusprovided. Using only size parameter for 1D cross section.\n")
+                wl = 2 * np.pi * radius / x
+            elif wldim == 1:
+                if  (len(x) != len(wl)):
+                    raise ValueError("Size parameter x must have the same length as wavelength.")
+                print("Size parameter and wavelength provided. Using only size parameter for 1D cross section.\n")
+                radius = wl * x / (2 * np.pi)
+                
+            axis1 = x
+            axis1label = "Size Parameter (x)"
+        #calculate x
+        if not xdim == 1:
+            if (radiusdim == 1) and (wldim == 1):
+                print("Calculating new size parameter array from radius and wavelength for 1D cross section.\n")
+                minx = 2 * np.pi * min(radius) / max(wl)
+                maxx = 2 * np.pi * max(radius) / min(wl)
+                x = np.linspace(minx, maxx, 1000)
+                axis1 = x
+                axis1label = "Size Parameter (x)"
+            else:
+                if (radiusdim == 1) and (nrdim == 1):
+                    print("Calculating new size parameter array from radius and refractive index for 2D cross section.\n")
+                    x = 2 * np.pi * radius / wl
+                    axis1 = radius
+                    axis1label = "Radius (µm)"
+                    axis2 = nr  
+                    axis2label = "Refractive Index (nr)"
+                elif ((wldim == 1) and (nrdim == 1)):
+                    if dims == 2:
+                        print("Calculating new size parameter array from refractive index and wavelength for 2D cross section.\n")
+                        axis2 = nr
+                        axis2label = "Refractive Index (nr)"
+                    elif dims == 1: 
+                        print("Calculating new size parameter array from refractive index and wavelength for 1D cross section.\n")
+                    x = 2 * np.pi * radius / wl
+                    axis1 = wl
+                    axis1label = "Wavelength (µm)"
+                elif nrdim == 1:
+                    print("Calculating new size parameter array from radius, refractive index and wavelength for 1D cross section.\n")
+                    x = 2 * np.pi * radius * nr / wl
+                    axis1 = nr
+                    axis1label = "Refractive Index (nr)"
+                elif wldim == 1:
+                    print("Calculating new size parameter array from radius, refractive index and wavelength for 1D cross section.\n")
+                    x = 2 * np.pi * radius / wl
+                    axis1 = wl
+                    axis1label = "Wavelength (µm)"
 
+        
+        mie = glmt(self.maxJ, wl, np.asarray(nr), x, dim = glmt_dims)
+        #calculate mie coefficients as a function of x
+        a = mie.a_j()
+        b = mie.b_j()
+        c = mie.c_j()
+        d = mie.d_j()
+
+        k = 2 * np.pi / wl 
+        
         if type == "scattering":
             #ensure C is 2D to make matrix multiplication work
             if self.C.ndim == 1:
-                C = self.C[:, None]
-            L = np.arange(0, len(C))
-            coefs = np.array([1j**L * np.sqrt(2*L+1)])
-            
-            prefac = (0.5*np.abs(C.T * coefs)**2).T
-            
+                C = self.C[1:, None]
+            L = np.arange(1, len(C)+1)
+            coefs = (2 * L + 1)[:, None]  # Ensure coefs is 2D for broadcasting
+            prefac = (coefs * np.abs(C)**2).T
+
             # Expand prefac to match the shape of a for broadcasting
             while prefac.ndim -1 < a.ndim:
                 prefac = np.expand_dims(prefac, axis=-1)
-                
-            Ws = prefac * (np.abs(a)**2 + np.abs(b)**2) # [J, mZ, x, nr]
-            Ws = np.sum(Ws, axis=(0, 1)) #sum over J and mZ
             
-            return Ws
+            included_e = prefac * np.expand_dims(np.abs(a[1:])**2, axis = 0) 
+            included_m = prefac * np.expand_dims(np.abs(b[1:])**2, axis = 0) 
+            
+            Ws = 2 * np.pi * np.sum(included_e.copy() + included_m.copy(), axis=(0, 1))/ k**2 #sum over J and mZ
+
+            W = Ws
     
         elif type == "internal":
             #ensure C is 2D to make matrix multiplication work
             if self.C.ndim == 1:
-                C = self.C[:, None]
-            L = np.arange(0, len(C))
-            coefs = np.array([1j**L * np.sqrt(2*L+1)])
+                C = self.C[1:, None]
+            L = np.arange(1, len(C)+1)
+            coefs = (2 * L + 1)[:, None]
             
-            prefac = 0.5*np.abs(C.T * coefs)**2
+            prefac = (0.5 * coefs * np.abs(C)**2).T
             
-            # Expand prefac to match the shape of a for broadcasting
+            # Expand prefac to match the shape of c/d for broadcasting
             while prefac.ndim -1 < c.ndim:
                 prefac = np.expand_dims(prefac, axis=-1)
             
-            Wint = prefac * (np.abs(c)**2 + np.abs(d)**2) # [J, mZ, x, nr]
-            Wint = np.sum(Wint, axis=(0, 1)) #sum over J and mZ
+            included_m = prefac * np.expand_dims(np.abs(c[1:])**2, axis = 0) 
+            included_e = prefac * np.expand_dims(np.abs(d[1:])**2, axis = 0) 
             
-            return Wint
+            Wint = 2 * np.pi * np.sum(included_e.copy() + included_m.copy(), axis=(0, 1)) / k**2 #sum over J and mZ
+         
+            W = Wint
+
         elif type == "extinction":
-            #ensure C is 2D to make matrix multiplication work
             if self.C.ndim == 1:
-                C = self.C[:, None]
-            L = np.arange(0, len(C))
-            coefs = np.array([1j**L * np.sqrt(2*L+1)])
+                C = self.C[1:, None]
+            L = np.arange(1, len(C) + 1)
+            coefs = (2 * L + 1)[:, None]
             
-            prefac = 0.5*np.abs(C.T * coefs)**2
-            
-            # Expand prefac to match the shape of a for broadcasting
-            while prefac.ndim -1 < c.ndim:
+            prefac = (0.5 * coefs * np.abs(C)**2).T
+
+            while prefac.ndim -1 < a.ndim:
                 prefac = np.expand_dims(prefac, axis=-1)
+    
             
-            Wext = prefac * (a + b) # [J, mZ, x, nr]
-            Wext = 2*np.real(np.sum(Wext, axis=(0, 1))) #sum over J and mZ
-            
-            return Wext
+            included_e = np.expand_dims(a[1:], axis = 0) 
+            included_m = np.expand_dims(b[1:], axis = 0) 
+            Wext = prefac * np.real(included_m.copy() + included_e.copy())
+            Wext = 4 * np.pi * np.sum(Wext, axis=(0, 1))/ k**2 #sum over J and mZ
+            W = Wext
         
         else:
             raise ValueError("type must be 'scattering', 'internal' or 'extinction'")
+    
+        included_e, included_m = included_e.squeeze(), included_m.squeeze()
         
-    def plotCrossSection(self, type="scattering", radius=None, nr=None):
-        if np.any(radius == None):
-            radius = self.rr
-        if np.any(nr == None):
-            nr = self.nr
-        C = self.getCrossSection(type=type, radius=radius, nr=nr)
+        # For each j in included_e and included_m, scale the row by the ratio of its max to the value of W at the same index
+        for j in range(included_e.shape[0]):
+            max_e = np.max(included_e[j])
+            max_m = np.max(included_m[j])
+            idx_e = np.argmax(included_e[j])
+            idx_m = np.argmax(included_m[j])
+            # scale 
+            included_e[j] *= (np.max(W[idx_e]) / max_e)
+            included_m[j] *= (np.max(W[idx_m]) / max_m)
+
+        if plot:
+            if dims == 0:
+                print("C has unexpected number of dimensions: 0")
+                print(f"C_{type} = {W} µm^2")
+                return W if not includeParts else (W, included_e, included_m)
+            
+            elif dims == 1:
+                plt.figure(figsize=(8, 5))
+                plt.plot(axis1, W, linewidth=1.5, color='blue', label=f"Total $C_{{{type}}}$")
+                if includeParts:
+                    for i in range(self.maxJ):
+                        plt.plot(axis1, included_e[i], linewidth=1, linestyle='--', alpha=0.8, label = f"Electric j={i+1}")
+                        plt.plot(axis1, included_m[i], linewidth=1, linestyle='--', alpha=0.8, label = f"Magnetic j={i+1}")
+                    plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+                plt.xlabel(axis1label)
+                plt.ylabel(f"C_{type}" + r"$\ \mathbf{\mathrm{\mu m^2}}$")
+                plt.grid(True)
+                plt.tight_layout()
+                plt.show()
+                
+            elif dims == 2:
+                extent = [axis1.min(), axis1.max(), axis2.min(), axis2.max()]
+                plt.figure(figsize=(8, 6))
+                plt.imshow(W.T, aspect='auto', origin='lower', extent=extent, cmap='viridis')
+                plt.xlabel(axis1label)
+                plt.ylabel(axis2label)
+                plt.colorbar(label=f"C_{type}"+ r"$\ \mathbf{\mathrm{\mu m^2}}$")
+                plt.show()
         
-        # Print info
-        if C.ndim == 0:
-            print("C has unexpected number of dimensions: 0")
-            print(f"Radius: {radius if radius is not None else self.rr}, nr: {nr if nr is not None else self.nr}, C_{type}: {C}")
-        # 1D plot
-        if C.ndim == 1:
-            # Pick x and label
-            if radius is not None and getattr(radius, "ndim", 0) and radius.size > 1:
-                x, xlabel = radius, "Radius"
-                title = "nr: " + str(nr)
-            elif nr is not None and getattr(nr, "ndim", 0) and nr.size > 1:
-                x, xlabel = nr, "Refractive Index (nr)"
-                title = "Radius: " + str(radius)
-            elif getattr(self.rr, "ndim", 0) and self.rr.size > 1:
-                x, xlabel = self.rr, "Radius"
-                title = "nr: " + str(nr)
-            elif getattr(self.nr, "ndim", 0) and self.nr.size > 1:
-                x, xlabel = self.nr, "Refractive Index (nr)"
-                title = "Radius: " + str(radius)
-            else:
-                x, xlabel = np.arange(len(C)), "Index"
-            plt.figure(figsize=(8, 5))
-            plt.plot(x, C, linewidth=2, color='blue')
-            plt.xlabel(xlabel)
-            plt.ylabel(f"C_{type}")
-            plt.title(title)
-            plt.grid(True)
-            plt.show()
-        # 2D plot
-        elif C.ndim == 2:
-            if radius is not None and nr is not None:
-                extent = [nr.min(), nr.max(), radius.min(), radius.max()]
-                xlabel, ylabel = "Refractive Index (nr)", "Radius"
-            elif radius is not None:
-                extent = [0, C.shape[1], radius.min(), radius.max()]
-                xlabel, ylabel = "Index", "Radius"
-            elif nr is not None:
-                extent = [nr.min(), nr.max(), 0, C.shape[0]]
-                xlabel, ylabel = "Refractive Index (nr)", "Index"
-            else:
-                extent = None
-                xlabel, ylabel = "Index", "Index"
-            plt.figure(figsize=(8, 6))
-            plt.imshow(C, aspect='auto', origin='lower', extent=extent, cmap='viridis')
-            plt.xlabel(xlabel)
-            plt.ylabel(ylabel)
-            plt.title(f"Cross Section ({type})")
-            plt.colorbar(label=f"C_{type}")
-            plt.show()
-        else:
-            print("C has unexpected number of dimensions:", C.ndim)
+        return W if not includeParts else (W, included_e, included_m)
     
     def plot_int(self, radius = None, nr = None, plot="components", globalnorm=False):
         """Plot the computed sum of multipoles.
@@ -387,7 +492,7 @@ class interaction(Multipoles):
                 norm = mcolors.Normalize(vmin=vmin, vmax=vmax)
             else:
                 norm = None
-                
+            
             fig.suptitle(f'Computed Sum of Multipoles', fontsize=24, fontweight='bold')
             for i, plane in enumerate(self.planes):
 
@@ -446,7 +551,39 @@ class interaction(Multipoles):
                 divider = make_axes_locatable(axs[i])
                 cax = divider.append_axes("right", size="5%", pad=0.05)
                 plt.colorbar(im, cax=cax)
-
+            
             fig.subplots_adjust(hspace=-0.8, wspace=-0.2)
             fig.tight_layout()
             plt.show()
+    
+    def printConstantBeamParams(self, x, wl, radius, nr):
+        # print the constant beam parameters
+        print("-----Constant beam parameters-----\n" )
+        x = np.asarray(x)
+        nr = np.asarray(nr)
+        radius = np.asarray(radius)
+        wl = np.asarray(wl)
+        c = 0
+        if x.ndim:
+            if not nr.ndim:
+                print(f"nr = {nr:.3f}")
+                c += 1
+        else:
+            if not (nr.ndim or radius.ndim or wl.ndim):
+                inputs = {'x': x, 'wl': wl, 'radius': radius, 'nr': nr}
+                units = ['', ' µm', ' µm', '']
+                for key, value in inputs.items():
+                    if value.ndim == 0:
+                        print(f"{key} = {value:.3f} {units[list(inputs.keys()).index(key)]}\n")
+                        c += 1 
+            else: 
+                inputs = {'wl': wl, 'radius': radius, 'nr': nr}
+                units = ['', ' µm', ' µm', '']
+                for key, value in inputs.items():
+                    if value.ndim == 0:
+                        print(f"{key} = {value:.3f} {units[list(inputs.keys()).index(key)]}\n")
+                        c += 1 
+        
+        if c == 0:
+            print("No constant beam parameters provided.\n")
+        print("-----------------------------------------\n")
