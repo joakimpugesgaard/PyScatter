@@ -3,16 +3,16 @@ import scipy.special as sp
 
 
 class glmt:
-    def __init__(self, maxJ, wl, nr, x, mu=1, mu1=1):
+    def __init__(self, maxJ, wl, nr, x, mu=1, mu1=1, dim = None):
         self.nr = nr
         self.maxJ = maxJ
         self.wl = wl
         self.x = x  # size parameter
         self.mu = mu
         self.mu1 = mu1
+        self.dim = dim
         # test maxJ is correct
         if maxJ < 0:
-            
             raise ValueError("maxJ must be greater than or equal to 0")
         # test wl is correct
 
@@ -25,10 +25,17 @@ class glmt:
             raise ValueError("All elements in R must be greater than 0")
         
         self.k = 2 * np.pi / self.wl
- 
-        # prepare meshgrid of nr and R
-        self.NR, self.X = np.meshgrid(self.nr, self.x)
 
+        # If nr and wl are both 1D, and dimension is intended as 1D, reduce NR and X to coupled combinations
+        if (self.dim == 1) and (self.nr.ndim == 1 and self.wl.ndim == 1 and self.nr.size == self.wl.size):
+            self.NR = self.nr[:, np.newaxis]  # Make it a column vector
+            self.X = self.x[:, np.newaxis]  # Make it a column vector
+        elif self.dim == None:
+            # prepare meshgrid of nr and R
+            self.NR, self.X = np.meshgrid(self.nr, self.x)
+        else:
+            raise ValueError("Invalid dimensions specified. Use dim=1 for 1D (and make sure lengths of inputs are equal) or None for 2D.")
+        
         # Precompute spherical Bessel and Hankel functions in a single loop for efficiency
         self.bx = []
         self.dbx = []

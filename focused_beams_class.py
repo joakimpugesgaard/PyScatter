@@ -67,15 +67,7 @@ class focused_beams(Multipoles):
             return self.PlaneWave
         else:
             raise ValueError("Beam type not recognized")
-
-    def Bessel(self, q, l, w, wl, z0, rho, z, **kwargs):
-        # Implement Bessel beam calculation here
-        pass
-
-    def PlaneWave(self, q, l, w, wl, z0, rho, z, **kwargs):
-        # Implement PlaneWave beam calculation here
-        pass
-
+        
     def d_jmp(self, j, m, p, Theta):
         lnCoef = 0.5 * (sp.gammaln(j - m + 1) + sp.gammaln(j + m + 1) - sp.gammaln(j + p + 1) - sp.gammaln(j - p + 1))
         cosFac = np.cos(Theta / 2) ** (m + p)
@@ -182,31 +174,10 @@ class focused_beams(Multipoles):
         LG = np.exp(logLG) * L
         
         return LG
-
-    def Bessel(self, q, l, w, wl, z0, rho, z, **kwargs):
-        # Implement Bessel beam calculation here
-        pass
-
-    def PlaneWave(self, q, l, w, wl, z0, rho, z, **kwargs):
-        # Implement PlaneWave beam calculation here
-        pass
-
-    def d_jmp(self, j, m, p, Theta):
-        lnCoef = 0.5 * (sp.gammaln(j - m + 1) + sp.gammaln(j + m + 1) - sp.gammaln(j + p + 1) - sp.gammaln(j - p + 1))
-        cosFac = np.cos(Theta / 2) ** (m + p)
-        sinFac = (-np.sin(Theta / 2)) ** (m - p)
-        
-        n = j - m
-        alpha = m - p
-        beta = m + p
-        hyp = sp.eval_jacobi(n, alpha, beta, np.cos(Theta))
-        
-        d_jmp = np.exp(lnCoef) * cosFac * sinFac * hyp
-        
-        return d_jmp
     
     def get_w(self, NA, l):
         w_values = {
+            0.25: [140, 121, 108, 98, 90, 84, 79, 75, 72],
             0.3: [170, 144, 130, 121, 113, 106, 101, 97, 94],
             0.5: [270, 236, 216, 200, 186, 178, 170, 162, 155],
             0.9: [500, 420, 390, 360, 335, 290, 317, 303, 290]

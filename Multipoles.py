@@ -63,6 +63,8 @@ class Multipoles:
         
         self.Leg = self.get_Legendre(l_max+1, m_max+1, np.cos(self.Theta))
         self.dLeg = self.get_Legendre(l_max+1, m_max+1, np.cos(self.Theta), diff = True)
+        #self.Leg = np.swapaxes(self.Leg, -2, -1)
+        #self.dLeg = np.swapaxes(self.dLeg, -2, -1)
         
         if not radius:
             self.rr = 0.25 * self.R.max() # Define the radius of the sphere
@@ -75,7 +77,7 @@ class Multipoles:
         
         # Find indices where values are less than or greater than rr
         index1 = np.where(self.R < self.rr)
-        index2 = np.where(self.R > self.rr)
+        index2 = np.where(self.R >= self.rr)
 
         # Set values in ABS and SCA arrays based on indices
         self.ABS[index2] = 0
@@ -95,7 +97,7 @@ class Multipoles:
     @staticmethod
     def Cl0(l):
         #return -1j
-        return 1
+        return -1
 
     @staticmethod
     def hankel(n, x, derivative=False):
@@ -199,11 +201,9 @@ class Multipoles:
         cp = self.clebsch_gordan(l, 1, j, m - 1, 1, m)
         c0 = self.clebsch_gordan(l, 1, j, m, 0, m)
         cm = self.clebsch_gordan(l, 1, j, m + 1, -1, m)
-
         M = np.array([(cp != 0) * (m - 1), (c0 != 0) * m, (cm != 0) * (m + 1)])
-
-        Y = np.array([self.spharm(l, m_val, theta, phi) for m_val in M])
-
+        #Y = np.array([self.spharm(l, m_val, theta, phi) for m_val in M])
+        Y = np.array([sp.sph_harm_y(l, m_val, theta, phi) for m_val in M])
         Ap = cp * Y[0, :]
         A0 = c0 * Y[1, :]
         Am = cm * Y[2, :]
@@ -225,7 +225,7 @@ class Multipoles:
         sgn = -2 * ((m < 0) - 0.5) # -1 if m is negative 1 if m is non-negative
         m = abs(m)
         
-        leg = self.Leg[l, m] *(-1)**m # Include the (-1)^m Condon-Shortley phase factor in the Legendre function
+        leg = self.Leg[l, m] #*(-1)**m # Include the (-1)^m Condon-Shortley phase factor in the Legendre function
         e = np.exp(1j * (sgn * m) * phi) # azimuthal factor
 
         Y = leg * e / np.sqrt(2 * np.pi) 
@@ -253,7 +253,7 @@ class Multipoles:
         else:
             diff_n = 1
         Leg = sp.assoc_legendre_p_all(l, m, theta, norm = True, diff_n = diff_n) # sp returns shape (1, l+1, 2m+1, len(theta))
-        Leg = Leg[0,:,:m+1] # shape (l, ,m, len(theta))
+        Leg = Leg[0,:,:m+1] # shape (l, m, len(theta))
         
         return Leg
 
@@ -277,7 +277,7 @@ class Multipoles:
         else:
             raise ValueError("spatial_fun must be 'hankel', 'bessel', 'both', or a callable function")      
 
-        # Vectorized computation
+        # VSH's
         Ap1, A01, Am1 = self.vsh(l, l, m, self.Theta, self.Phi)
         
         spatial0 = spatial_func(l, self.wn * self.R)
@@ -304,6 +304,15 @@ class Multipoles:
         Z_electric = Alp_e_0
         M_electric = Alp_e_m
         
+        #P_magnetic =  Ap1
+        #Z_magnetic =  A01
+        #M_magnetic = Am1
+
+        #P_electric = self.Clp(l) * Ap2 + self.Clm(l) * Ap3
+        #Z_electric = self.Clp(l) * A02 + self.Clm(l) * A03
+        #M_electric = self.Clp(l) * Am2 + self.Clm(l) * Am3
+        
+        
         out = {
             "magnetic": np.array([P_magnetic, Z_magnetic, M_magnetic]),
             "electric": np.array([P_electric, Z_electric, M_electric])
@@ -314,7 +323,7 @@ class Multipoles:
     
     def plot_multipoles(self, l, m, type = "magnetic", interaction = "scattering", plot = "components", globalnorm = False):
         assert type in ["magnetic", "electric"], "type must be 'magnetic' or 'electric'"
-        assert interaction in ["scattering", "internal"], "interaction must be 'scattering' or 'internal'"
+        assert interaction in ["scattering", "internal", "both"], "interaction must be 'scattering', 'internal', or 'both"
         assert plot in ["components", "total"], "plot must be 'components' or 'total'"
         
         if interaction == "scattering":
@@ -323,6 +332,9 @@ class Multipoles:
         elif interaction == "internal":
             spatial_fun = "bessel"
             S = self.ABS
+        elif interaction == "both":
+            spatial_fun = "both"
+            S = self.SCA + self.ABS
         else:
             raise ValueError("type must be 'scattering' or 'internal'")
         
@@ -404,5 +416,3 @@ class Multipoles:
             fig.subplots_adjust(hspace=-0.8, wspace=-0.2)
             fig.tight_layout()
             plt.show()
-            
-            
