@@ -27,7 +27,7 @@ class domain:
     
     def __init__(self, size, planes = {"xy", "xz"}):
         self.size = size
-        self.N = 100 # Number of points in each direction
+        self.N = 200 # Number of points in each direction
         self.planes = planes
         self.check_params(size, planes)
         
