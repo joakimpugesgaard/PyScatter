@@ -118,7 +118,7 @@ class planeWave(Multipoles):
             sum = (sumL - sumR) / (np.sqrt(2)*1j)
         
         return sum 
-
+    
     def plot_beam(self, plot="components", globalnorm=False):
         """Plot the computed sum of multipoles.
 
@@ -131,7 +131,7 @@ class planeWave(Multipoles):
         """
 
         assert plot in ["components", "total"], "plot must be 'components' or 'total'"
-    
+
 
         sum = self.compute_sum()
         
@@ -139,7 +139,7 @@ class planeWave(Multipoles):
             # Plot Nself.planes x 3 subplots
             fig, axs = plt.subplots(len(self.planes), 3, figsize=(12, 4 * len(self.planes)))
             sum[:] = np.real(sum[:]) 
-                
+            
             if globalnorm:
                 # Find the global min and max values for normalization
                 vmin = np.min(np.abs(sum[:])) 
