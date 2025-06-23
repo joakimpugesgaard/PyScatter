@@ -5,3 +5,5 @@ interaction_class.ipynb
 decomp_class.ipynb
 /treams/
 *.zip
+*.pdf
+*.DS_store
