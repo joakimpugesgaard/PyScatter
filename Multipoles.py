@@ -35,7 +35,7 @@ params = {
 plt.rcParams.update(params)
 
 class Multipoles:
-    def __init__(self, l_max, m_max, wl, domain, nr = 1, radius = None):
+    def __init__(self, l_max, m_max, wl, domain, nr = 1, radius = None, transform = False):
         self.l_max = l_max
         self.m_max = m_max
         
@@ -47,15 +47,20 @@ class Multipoles:
             raise ValueError(f"m must be in range {-l_max} to {l_max}")
 
         self.wl = wl
-        self.spherical_grids = domain.spherical_grid()
+
         self.size = domain.size
         
         self.nr = nr #relative refractive index
         
         #other initialized variables
         self.wn = 2 * np.pi / wl
-        self.planes = self.spherical_grids.keys()
         
+        if not transform:
+            self.spherical_grids = domain.spherical_grid()    
+        else:
+            self.spherical_grids = domain.to_x()
+            
+        self.planes = self.spherical_grids.keys()
         # initialize arrays of spherical coordinates. shape = (Nplanes, shape(grid))
         self.R = np.array([self.spherical_grids[plane][0] for plane in self.planes])
         self.Theta = np.array([self.spherical_grids[plane][1] for plane in self.planes])

@@ -98,6 +98,39 @@ class domain:
 
             return spherical_grids
         
+    def to_x(self):
+    # Transform the cartesian coordinate system: x -> -z, y -> y, z -> x
+        cart_grids = self.cart_grid()
+        transformed_grids = {}
+
+        for plane, grid in cart_grids.items():
+            if plane == "xy":
+                x, y = grid
+                x_new = np.zeros_like(x)
+                y_new = y
+                z_new = -x
+            elif plane == "xz":
+                x, z = grid
+                x_new = z
+                y_new = np.zeros_like(x)
+                z_new = -x
+            elif plane == "yz":
+                y, z = grid
+                x_new = z
+                y_new = y
+                z_new = np.zeros_like(y)
+            else:
+                continue
+
+            r = np.sqrt(x_new**2 + y_new**2 + z_new**2)
+            # Avoid division by zero
+            with np.errstate(invalid='ignore', divide='ignore'):
+                theta = np.arccos(np.where(r != 0, z_new / r, 0))
+            phi = np.arctan2(y_new, x_new)
+            transformed_grids[plane] = np.array([r, theta, phi])
+
+        return transformed_grids
+    
     def show_coord(self, coord, spherical_grids):
         if coord not in ["r", "theta", "phi"]:
             raise ValueError("Invalid coordinate. Choose from 'r', 'theta', or 'phi'.")
