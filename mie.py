@@ -31,7 +31,7 @@ class glmt:
             self.NR = self.nr[:, np.newaxis]  # Make it a column vector
             self.X = self.x[:, np.newaxis]  # Make it a column vector
         elif self.dim == None:
-            # prepare meshgrid of nr and R
+            # prepare meshgrid of nr and x
             self.NR, self.X = np.meshgrid(self.nr, self.x)
         else:
             raise ValueError("Invalid dimensions specified. Use dim=1 for 1D (and make sure lengths of inputs are equal) or None for 2D.")
