@@ -1,15 +1,1 @@
-__pycache__/
-*.pyc
-/newvenv/
-/images/
-/main/
-/newvenv3/
-/newvenv2/
-/treams/
-/tmp/
-/tmp2/
-/test1/
-/data/CG1_CG2 copy.npz
-*.zip
-*.pdf
-*.DS_store
+test1/
