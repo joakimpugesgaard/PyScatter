@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>domain</title>
+  <title>domain Class Documentation</title>
   <style>
     html {
       color: #1a1a1a;
@@ -166,11 +166,11 @@
       vertical-align: middle;
     }
   </style>
-  <script
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
-  type="text/javascript"></script>
 </head>
 <body>
+<header id="title-block-header">
+<h1 class="title">domain Class Documentation</h1>
+</header>
 <h1 id="domain_class"><code>domain_class</code></h1>
 <h2 id="description">Description</h2>
 <p>This class defines 2-dimensional spatial domains in cartesian and/or
@@ -184,49 +184,6 @@ customizable.</p>
 desired planes as 2D <code>numpy</code> arrays with a specified
 resolution.</p>
 <pre><code>domain(size, points = 150, planes = {&#39;xy&#39;, &#39;xz&#39;})</code></pre>
-<div class="description">
-<p>float — width of the domain from center to edge in microns.</p>
-<p>int — number of points along each axis in the grid. Default is
-150.</p>
-<p>set — must be any of <code>’xy’</code>, <code>’xz’</code> or
-<code>’yz’</code>. Defaults to <code>{’xy’, ’xz’}</code>.</p>
-</div>
 <h2 id="methods">Methods</h2>
-<div class="description">
-<p>Ensures <code>size</code> and <code>points</code> are positive
-numbers and <code>planes</code> are valid. Called directly upon
-initialization.</p>
-<p><br />
-Defines 2D cartesian grids based on inputs.<br />
-Returns a dict with planes as keys and corresponding
-<code>numpy.meshgrid()</code> 2D arrays as values with Cartesian
-coordinates. For example, the <code>’xy’</code> key maps to
-<code>numpy.array([x, y])</code>.</p>
-<p><br />
-Returns a dict with keys corresponding to planes and values being 3D
-<code>numpy</code> arrays <code>[x, y, z]</code>. The missing coordinate
-for each plane is filled with zeros.<br />
-Used for plotting on cartesian grids rather than spherical.</p>
-<p><br />
-Returns a dict with identical keys (planes). The values are 3D
-<code>numpy</code> arrays with radial, polar, and azimuthal coordinates
-of the plane, defined as</p>
-<p><span class="math display">\[\begin{aligned}
-        r &amp;= \sqrt{x^2 + y^2 + z^2} \\
-        \theta &amp;= \arccos\left(\frac{z}{r}\right) \quad \in [0, \pi]
-\\
-        \phi &amp;=
-        \begin{cases}
-            \arctan2(y, x) &amp; \text{for xy and xz planes} \\
-            \arctan2(x, y) + \pi/2 &amp; \text{for yz plane}
-        \end{cases}
-    
-\end{aligned}\]</span></p>
-<p>Visualizes the spherical coordinate values. <code>coord</code> is
-either <code>’r’</code>, <code>’theta’</code>, or <code>’phi’</code>,
-and <code>spherical_grids</code> is the dict returned by
-<code>spherical_grid()</code>. Plots the requested coordinate in all
-defined planes using <code>matplotlib</code>.</p>
-</div>
 </body>
 </html>
