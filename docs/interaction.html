@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>interaction</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<h1 id="interaction"><code>interaction</code></h1>
+<h2 id="description">Description</h2>
+<p>The <code>interaction</code> class applies the
+<code>multipoles</code> to model the interaction between an incident
+electromagnetic beam and a spherical scatterer using Mie theory defined
+in the <code>glmt</code> class. It supports incident beams of types:
+plane wave or focused. This class computes the resulting electric field
+contributions using the multipolar expansions and evaluates scattering,
+internal, and extinction cross-sections.<br />
+It uses the <code>domain_class</code> from the beam objects to enable
+spatial evaluation and visualization.</p>
+<h2 id="initialization">Initialization</h2>
+<pre><code>interaction(beam, domain, nr, radius, mu=1, mu1=1, interaction=&quot;both&quot;)</code></pre>
+<div class="description">
+<p><code>beam_class</code> instance. Defines the incident beam and
+provides parameters like <code>wl</code>, <code>maxJ</code>,
+<code>mz_star</code>, and <code>polarization</code>.</p>
+<p><code>domain_class</code> instance. Provides the 3D spatial grid and
+coordinate system for field evaluation.</p>
+<p>float or array. Refractive index of the spherical scatterer relative
+to the surrounding medium.</p>
+<p>float or array. Radius of the scatterer in microns.</p>
+<p>float. Relative magnetic permeability of the scatterer (default:
+1).</p>
+<p>float. Relative magnetic permeability of the surrounding medium
+(default: 1).</p>
+<p>str. Specifies which fields to compute. Options:
+<code>"scattering"</code>, <code>"internal"</code>, or
+<code>"both"</code> (default).</p>
+</div>
+<h2 id="methods">Methods</h2>
+<div class="description">
+<p><br />
+Returns <code>True</code> if both inputs are equal scalars or equal
+arrays, and <code>False</code> otherwise.</p>
+<p><br />
+Computes the total multipolar field <span
+class="math inline">\(\mathbf{A}\)</span> as a sum over angular momentum
+indices: <span class="math display">\[\mathbf{A} =
+\sum_{j=j_0}^{\texttt{maxJ}} i^j \sqrt{2j+1} \cdot C_j \left[ a_j
+\mathbf{A}_{j,m}^{(e)} + b_j \mathbf{A}_{j,m}^{(m)} \right] \cdot
+\texttt{SCA} + \left[ c_j \mathbf{A}_{j,m}^{(m)} + d_j
+\mathbf{A}_{j,m}^{(e)} \right] \cdot \texttt{ABS}.\]</span> If
+<code>includeBeam=True</code>, also computes the beam field without
+interaction.</p>
+<p><br />
+Computes cross-sections: <span class="math display">\[\begin{aligned}
+    C_{\text{sca}} &amp;= \frac{2\pi}{k^2} \sum_j (2j+1) |C_{j m p}|^2
+\left( |a_j|^2 + |b_j|^2 \right) \\
+    C_{\text{ext}} &amp;= \frac{2\pi}{k^2} \sum_j (2j+1) |C_{j m p}|^2
+\Re(a_j + b_j) \\
+    C_{\text{int}} &amp;=  C_{\text{ext}}- C_{\text{sca}}
+  
+\end{aligned}\]</span></p>
+<div class="description">
+<p><code>"scattering"</code>, <code>"internal"</code>, or
+<code>"extinction"</code>.</p>
+<p>0, 1, or 2. Specifies dimension of output.</p>
+<p>if <code>True</code>, returns electric/magnetic contributions
+separately.</p>
+<p>if <code>True</code>, generates a plot.</p>
+<p>optional overrides: <code>x</code>, <code>radius</code>,
+<code>nr</code>, <code>wavelength</code>.</p>
+</div>
+<p><br />
+Visualizes the computed field intensity <span
+class="math inline">\(|\mathbf{A}|^2\)</span>. Can show circular
+polarization components (<span class="math inline">\(\xi_{\pm1},
+\xi_0\)</span>) or total intensity.</p>
+<div class="description">
+<p>optional float. Overrides stored radius.</p>
+<p>optional float. Overrides stored refractive index.</p>
+<p><code>"components"</code> or <code>"total"</code>.</p>
+<p>if <code>True</code>, normalize all subplots to global max.</p>
+<p>Bool: If True, adds the electric field of the <code>beam</code> after
+the multipolar sum is computed and visualizes the total intensity.</p>
+</div>
+<p><br />
+Prints input beam and particle parameters when they are scalars, for
+debugging and verification.</p>
+</div>
+</body>
+</html>

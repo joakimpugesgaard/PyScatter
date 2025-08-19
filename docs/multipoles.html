@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>multipoles</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<h1 id="multipoles"><code>Multipoles</code></h1>
+<h2 id="description">Description</h2>
+<p>This class provides the mathematical framework for evaluating the
+multipolar fields <span class="math inline">\(A_{j m_z}\)</span> of
+electric or magnetic type using vector spherical harmonics. It supports
+field visualization in circular polarization and integrates with domains
+defined by the <code>domain_class</code>. The implementation follows the
+formalism of M.E. Rose<span class="citation"
+data-cites="rose"></span>.</p>
+<h2 id="initialization">Initialization</h2>
+<p>Creating an instance of a <code>Multipoles</code> object sets up the
+spherical harmonics, coordinate systems, and coupling factors needed to
+evaluate and visualize multipolar radiation patterns.</p>
+<pre><code>Multipoles(l_max, m_max, wl, domain, nr = 1, radius = None)</code></pre>
+<div class="description">
+<p>int — maximum total angular momentum quantum number <span
+class="math inline">\(\l\)</span>.</p>
+<p>int — maximum quantum number for the z-projection of the AM <span
+class="math inline">\(m_z\)</span>.</p>
+<p>float — wavelength of incident field (in microns).</p>
+<p><code>domain_class</code> object — spatial domain used for evaluating
+the fields.</p>
+<p>float — relative refractive index of the scatterer (default is
+1).</p>
+<p>float — optional radius of the scatterer. If not specified, defaults
+to 25% of domain size.</p>
+</div>
+<h2 id="methods">Methods</h2>
+<div class="description">
+<p><br />
+Returns the spherical Hankel function of the first kind of order <span
+class="math inline">\(n\)</span>, or its derivative if
+<code>derivative=True</code>. Defined as <span
+class="math inline">\(h_n(kr) = j_n(kr) + i y_n(kr)\)</span>.</p>
+<p><br />
+Computes the Clebsch-Gordan coefficient <span
+class="math inline">\(\langle j_1, m_1; j_2, m_2 | j, m \rangle\)</span>
+using Wigner 3j symbols: <span class="math display">\[C(j_1 j_2 j; m_1
+m_2 m) = (-1)^{j_1 - j_2 + m} \sqrt{2j + 1}
+    \begin{pmatrix}
+    j_1 &amp; j_2 &amp; j \\
+    m_1 &amp; m_2 &amp; -m
+    \end{pmatrix}\]</span></p>
+<p><br />
+Returns the Wigner 3j symbol for given quantum numbers. Used internally
+by <code>clebsch_gordan</code>.</p>
+<p><br />
+Normalization coefficients for vector spherical harmonics: <span
+class="math display">\[C_{l+1}^{(e)} = -\sqrt{\frac{l}{2l+1}}, \quad
+    C_{l-1}^{(e)} = \sqrt{\frac{l+1}{2l+1}}, \quad
+    C_l^{(m)} = 1\]</span></p>
+<p>Computes the normalized associated Legendre functions <span
+class="math inline">\(P_{l}^{m}(\cos\theta)\)</span> using<br />
+<code>scipy.assoc_legendre_p_all()</code>, with optional derivative.
+Returns a 3D array with shape <span class="math inline">\((l+1,\, m+1,\,
+\text{len}(\theta))\)</span>.</p>
+<p><br />
+Computes the scalar spherical harmonic <span
+class="math inline">\(Y_l^m(\theta, \phi)\)</span> using the Rose
+convention: <span class="math display">\[Y_l^m (\theta, \phi) =
+\frac{1}{\sqrt{2\pi}} P_l^m(\cos\theta) e^{im\phi}\]</span></p>
+<p><br />
+Computes the components <span class="math inline">\(\xi_+, \xi_0,
+\xi_-\)</span> of the vector spherical harmonics: <span
+class="math display">\[\mathbf{T}_{l1j} = \sum_\mu C(l1j; M - \mu, \mu)
+Y_l^{M - \mu} \boldsymbol{\xi}_\mu\]</span></p>
+<p><br />
+Computes the electric and magnetic field components of a multipole <span
+class="math inline">\(A_{lm_z}\)</span> as follows, using the given
+spatial function (e.g., <code>’hankel’</code>, <code>’bessel’</code>,
+<code>’both’</code>) for outgoing, standing or both multipole types.
+<span class="citation" data-cites="rose"></span></p>
+<p><span class="math display">\[\begin{aligned}
+    \text{Magnetic:}\qquad&amp;\mathbf{A}^{(m)}_{lm_z}=C_l^{(m)}\zeta_l(kr)\mathbf{T}_{llm_z}(\theta,\varphi)\\
+    \text{Electric:}\qquad&amp;\mathbf{A}^{(e)}_{lm_z}=C_{l+1}^{(e)}\zeta_{l+1}(kr)\mathbf{T}_{l,l+1,m_z}(\theta,\varphi)+
+    C_{l-1}^{(e)}\zeta_{l-1}(kr)\mathbf{T}_{l,l-1,m_z}(\theta,\varphi),
+    
+\end{aligned}\]</span><br />
+Returns a dict object with the two parities as keys, each holding a
+<code>numpy</code> array with each polarization component of the
+electric field.</p>
+<pre><code>    {
+        &quot;magnetic&quot;: array([xi_+, xi_0, xi_-]),
+        &quot;electric&quot;: array([xi_+, xi_0, xi_-])
+    }</code></pre>
+<p><br />
+Visualizes the field distribution for a given multipole defined by
+integers <span class="math inline">\(l\)</span> and <span
+class="math inline">\(m\)</span>. Options:</p>
+<ul>
+<li><p><code>type:</code> <code>"magnetic"</code> or
+<code>"electric"</code></p></li>
+<li><p><code>interaction:</code> <code>"scattering"</code>,
+<code>"internal"</code>, or <code>"both"</code>, dictating which<br />
+spatial function to use in the above function, i.e. whether the
+multipole is outgoing (contributing to the scattered field), standing
+(contributing to the internal field) or both.</p></li>
+<li><p><code>plot:</code> <code>"components"</code> to show each <span
+class="math inline">\(\xi\)</span>-component, or <code>"total"</code>
+for total intensity</p></li>
+<li><p><code>globalnorm:</code> whether to normalize across all
+planes</p></li>
+</ul>
+</div>
+</body>
+</html>
