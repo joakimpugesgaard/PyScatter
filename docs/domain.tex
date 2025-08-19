@@ -1,0 +1,50 @@
+\section{\texttt{domain\_class}}
+
+\subsection{Description}
+This class defines 2-dimensional spatial domains in cartesian and/or spherical coordinates used for field calculations of all multipolar fields. The planes are always centered around origo.
+It supports customizable size, meaning that it can be defined in terms of wavelength multiples. Furthermore, resolution and plane selection are customizable.
+
+\subsection{Initialization}
+Creating an instance of a \texttt{domain} object initializes the desired planes as 2D \texttt{numpy} arrays with a specified resolution.
+
+\begin{verbatim}
+domain(size, points = 150, planes = {'xy', 'xz'})
+\end{verbatim}
+
+\begin{description}[leftmargin=3cm]
+    \item[size:] float — width of the domain from center to edge in microns.
+    \item[points:] int — number of points along each axis in the grid. Default is 150.
+    \item[planes:] set — must be any of \texttt{'xy'}, \texttt{'xz'} or \texttt{'yz'}. Defaults to \texttt{\{'xy', 'xz'\}}.
+\end{description}
+
+\subsection{Methods}
+\begin{description}[leftmargin=3.5cm]
+    \item[\texttt{check\_params(size, planes, points)}] \hfill
+    Ensures \texttt{size} and \texttt{points} are positive numbers and \texttt{planes} are valid. Called directly upon initialization.
+
+    \item[\texttt{cart\_grid()}] \hfill \\
+    Defines 2D cartesian grids based on inputs.\\
+    Returns a dict with planes as keys and corresponding \texttt{numpy.meshgrid()} 2D arrays as values with Cartesian coordinates. For example, the \texttt{'xy'} key maps to \texttt{numpy.array([x, y])}.
+
+    \item[\texttt{cart\_coords()}] \hfill \\
+    Returns a dict with keys corresponding to planes and values being 3D \texttt{numpy} arrays \texttt{[x, y, z]}. The missing coordinate for each plane is filled with zeros.\\
+    Used for plotting on cartesian grids rather than spherical.
+
+    \item[\texttt{spherical\_grid()}] \hfill \\
+    Returns a dict with identical keys (planes). The values are 3D \texttt{numpy} arrays with radial, polar, and azimuthal coordinates of the plane, defined as
+
+    \begin{align*}
+        r &= \sqrt{x^2 + y^2 + z^2} \\
+        \theta &= \arccos\left(\frac{z}{r}\right) \quad \in [0, \pi] \\
+        \phi &= 
+        \begin{cases}
+            \arctan2(y, x) & \text{for xy and xz planes} \\
+            \arctan2(x, y) + \pi/2 & \text{for yz plane}
+        \end{cases}
+    \end{align*}
+
+    \item[\texttt{show\_coord(coord, spherical\_grids)}] \hfill
+    Visualizes the spherical coordinate values. \texttt{coord} is either \texttt{'r'}, \texttt{'theta'}, or \texttt{'phi'}, and \texttt{spherical\_grids} is the dict returned by \texttt{spherical\_grid()}. Plots the requested coordinate in all defined planes using \texttt{matplotlib}.
+\end{description}
+
+

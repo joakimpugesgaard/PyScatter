@@ -1,0 +1,59 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{amsfonts} % For math fonts and symbols
+\usepackage{amssymb} % For additional math symbols
+\usepackage{verbatim} % For verbatim environments (code blocks)
+\usepackage{geometry} % For adjusting page margins
+\usepackage{mathrsfs} % For script fonts (optional, if used in equations)
+\usepackage{physics}
+\usepackage{stix} % For STIX fonts (matches matplotlib STIXGeneral)
+\geometry{margin=1in} % Set 1-inch margins
+\setlist[description]{style=nextline, font=\normalfont\bfseries} % Consistent description style
+\usepackage{csquotes}
+\usepackage[backend=biber,style=ieee,sortcites,eprint=true,maxnames=5,defernumbers=true,refsegment=section]{biblatex}
+\addbibresource{bibliography.bib}
+\title{\texttt{PyScat} Documentation \\ \large Version 0.1}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Requirements}
+\begin{itemize}
+    \item \texttt{scipy} version 1.15
+    \item \texttt{numpy} version 1.26
+    \item \texttt{matplotlib} version 3.9
+\end{itemize}
+
+\newpage
+
+\input{domain}
+
+\newpage
+
+\input{multipoles}
+\newpage
+\input{planewave}
+\newpage
+\input{focusedbeams.tex}
+\newpage
+\input{glmt}
+\newpage
+\input{interaction}
+\newpage
+\input{treams}
+\newpage
+\medskip
+\printbibliography
+\end{document}
+
+

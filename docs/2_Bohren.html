@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>2_Bohren</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<h1 id="sec:2">Multipolar fields for spherical problems</h1>
+<p>This chapter introduces the multipolar fields as solutions of
+Maxwell’s equations for problems with spherical symmetry. These fields
+will be expressed in a basis of the so-called multipolar modes. I will
+provide an overview of two different approaches that lead to a
+multipolar expansion of the field in different coordinate systems.<br />
+In general, we will consider electromagnetic fields in linear,
+isotropic, and homogeneous media. Such fields are fully described by an
+electric and magnetic field, <span
+class="math inline">\(\mathbf{E}\)</span> and <span
+class="math inline">\(\mathbf{H}\)</span>, that for the aforementioned
+conditions need to satisfy the vectorial Helmholtz equation, obtained by
+the Maxwell equations: <span class="math display">\[\label{eq:helmholtz}
+    \nabla^2\mathbf{E}+k^2\mathbf{E}=0 \qquad \qquad
+\nabla^2\mathbf{H}+k^2\mathbf{H}=0\]</span> where <span
+class="math inline">\(k=2\pi/\lambda\)</span> is the wave number. This
+section will demonstrate how the above two equations can be solved by
+expanding <span class="math inline">\(\mathbf{E}\)</span> and <span
+class="math inline">\(\mathbf{H}\)</span> in multipolar modes,
+constructed by first solving the scalar wave equation, <span
+class="math display">\[\label{eq:helmholtz_scalar}
+    \nabla^2\psi+k^2\psi=0,\]</span> in spherical coordinates by
+separation of variables, <span
+class="math inline">\(\psi(r,\theta,\varphi)=\zeta(r)Y(\theta,\varphi).\)</span><br />
+Inserting this solution in Eq. <a href="#eq:helmholtz_scalar"
+data-reference-type="ref"
+data-reference="eq:helmholtz_scalar">[eq:helmholtz_scalar]</a> will
+yield independent ordinary differential equations for the radial and
+angular part. The radial equation has the spherical Bessel functions,
+<span class="math inline">\(j_j(r)\)</span> and <span
+class="math inline">\(y_j(r)\)</span> (or any linear combination
+thereof) as solutions, while the angular equation will be satisfied by
+the spherical harmonics (See App. <a href="#app:multipoles"
+data-reference-type="ref"
+data-reference="app:multipoles">[app:multipoles]</a>).</p>
+<p>Using the multipolar basis to expand <span
+class="math inline">\(\mathbf{E}\)</span> and <span
+class="math inline">\(\mathbf{H}\)</span>, we may describe <em>any</em>
+electromagnetic field with such components. We will later see that this
+is a smart choice when describing the scattering process of spherical
+particles.</p>
+<h2 id="sec:2_bohren">Approach 1: Spherical polarisation vectors</h2>
+<p>One approach to deriving the multipoles is to construct them from the
+spherical unit vectors, <span class="math inline">\(\mathbf{\hat{r}},
+\boldsymbol{\hat{\theta}}\)</span> and <span
+class="math inline">\(\boldsymbol{\hat{\varphi}}\)</span>, and the
+solution of the scalar wave equation, <span
+class="math inline">\(\psi\)</span>. This approach is taken in <span
+class="citation" data-cites="bohren"></span>, which leads to the
+so-called <em>magnetic mode</em> (or transverse electric mode), <span
+class="math inline">\(\mathbf{M}=\nabla \times
+(\mathbf{r}\psi)\)</span>, and an <em>electric mode</em> (transverse
+magnetic) as <span class="math inline">\(\mathbf{N}=\nabla \times
+\mathbf{M}/k\)</span>. Here, <span
+class="math inline">\(\mathbf{r}=r\hat{\mathbf{r}}\)</span> is the
+radial vector. Using the solutions of Eq. <a href="#eq:helmholtz_scalar"
+data-reference-type="ref"
+data-reference="eq:helmholtz_scalar">[eq:helmholtz_scalar]</a>, the
+multipolar modes have the following expressions in the spherical basis
+and coordinates:</p>
+<p><span class="math display">\[\begin{aligned}
+\mathbf{M}_{jm_z} &amp;= \frac{m_z}{\sin \theta} P_j^{m_z}(\cos\theta)
+\zeta_j(kr) e^{im_z \phi} \, \boldsymbol{\hat{\theta}} - \frac{\d
+P_j^{m_z}(\cos\theta)}{\d \theta} \frac{\zeta_j(kr) e^{im_z
+\phi}}{\zeta_j(kr)} \,\boldsymbol{\hat{\varphi}} \\
+\mathbf{N}_{jm_z} &amp;=  j(j + 1) P_j^{m_z}(\cos\theta)
+\frac{\zeta_j(kr)}{kr} e^{im_z \phi} \, \mathbf{\hat{r}} + \frac{1}{kr}
+\frac{\d \left[ kr \zeta_j(kr) \right]}{\d (kr)} \frac{\d
+P_j^{m_z}(\cos\theta)}{\d \theta} e^{im_z \phi} \,
+\boldsymbol{\hat{\theta}} \\
+&amp;\quad i e^{im_z \phi} \frac{m_z}{\sin \theta} P_j^{m_z}(\cos\theta)
+\frac{1}{kr} \frac{\d \left[ kr \zeta_j(kr) \right]}{\d (kr)} \,
+\boldsymbol{\hat{\varphi}}
+\end{aligned}\]</span> <span class="math inline">\(j\in\mathbb{N}_0\
+\text{and}\ m_z\in [-j,j]\)</span> are indices appearing in the
+differential equations.</p>
+<p>Any incident EM field can then be expanded in this basis by proving
+that the modes are orthogonal for all <span class="math inline">\(j,
+m_z\)</span> and ensuring that the sum converges and is normalised by
+appropriate choice of coefficients, <span
+class="math inline">\(g^{(m)}_{jm_z}\)</span> &amp; <span
+class="math inline">\(g^{(e)}_{jm_z}\)</span><span class="citation"
+data-cites="bohren"></span>: <span
+class="math display">\[\label{eq:E_i_expansion}
+    \mathbf{E}_i = \sum_{j=0}^\infty \sum_{m_z=-j}^j
+g_{jm_z}^{(m)}\mathbf{M}_{jm_z}
+    +g_{jm_z}^{(e)}\mathbf{N}_{jm_z}.\]</span> As an example to be
+compared with the other approach, I will present the plane-wave
+expansion in this basis, which in the Cartesian basis has the simple
+expression for a plane wave propagating along the <span
+class="math inline">\(z\)</span> axis and polarised along the <span
+class="math inline">\(x\)</span> axis: <span
+class="math display">\[\label{eq:PW_cart}
+     \mathbf{E}_i = E_0e^{ikr\cos\theta}\mathrm{\mathbf{e}}_x\]</span>
+It can be shown that all coefficients except <span
+class="math inline">\(g^{(m)}_{j,1}\)</span> &amp; <span
+class="math inline">\(g^{(e)}_{j,1}\)</span> vanish. Following the
+notation in <span class="citation" data-cites="bohren"></span>, each
+mode can also be separated in an even and odd component, e.g. <span
+class="math inline">\(\mathbf{M}_{ejm_z}\)</span> and <span
+class="math inline">\(\mathbf{M}_{ojm_z}\)</span>. This yields the
+simplified expansion of the plane wave <span
+class="math display">\[\label{eq:PW_sph}
+    \mathbf{E}_i=E_0\sum_{j=1}^\infty i^j
+\frac{2j+1}{j(j+1)}(\mathbf{M}_{oj1}-i\mathbf{N}_{ej1})\]</span></p>
+<h2 id="2_rose">Approach 2: Angular momentum method</h2>
+<p>Another way of defining the multipoles is provided by M.E. Rose in
+<span class="citation" data-cites="rose"></span>. This section follows
+his notation. In this approach, the multipoles are demanded to be
+eigenfunctions of the z-component of the angular momentum operator,
+<span class="math inline">\(\mathbf{J}=\mathbf{L}+\mathbf{S}\)</span>
+and its square, <span class="math inline">\(\mathbf{J}^2\)</span>. The
+eigenfunctions of the orbital angular momentum operators are the
+spherical harmonics, <span class="math inline">\(Y_l^m\)</span>, <span
+class="math display">\[\label{eq.sphharm}
+    L_zY_l^{m_z}=m_zY_l^{m_z} \qquad
+\mathbf{L}^2Y_l^{m_z}=l(l+1)Y_l^{m_z},\]</span> and the spin
+eigenfunctions are the normalized spherical basis vectors: <span
+class="math display">\[\label{eq:S_ev}
+    \boldsymbol{\xi}_1=-\frac{1}{\sqrt{2}}(\mathbf{\hat{x}}+i\mathbf{\hat{y}})\qquad
+    \boldsymbol{\xi}_0=\mathbf{\hat{z}}\qquad
+    \boldsymbol{\xi}_{-1}=\frac{1}{\sqrt{2}}(\mathbf{\hat{x}}-i\mathbf{\hat{y}}),\]</span>
+that satisfy the eigenvalue equation <span
+class="math inline">\(\mathbf{S}\boldsymbol{\xi}_{\mu}=\mu\mathbf{S}\quad
+\mu=1,0,-1\)</span>. These polarisation vectors correspond to left,
+<span class="math inline">\(z\)</span> and right circularly polarised
+light respectively. Finding eigenfunctions of <span
+class="math inline">\(J_z\)</span> requires finding common
+eigenfunctions of <span class="math inline">\(L_z\)</span> and <span
+class="math inline">\(S_z\)</span>, which is done with the
+Clebsch-Gordan coefficients(See App. <a href="#app:multipoles"
+data-reference-type="ref"
+data-reference="app:multipoles">[app:multipoles]</a>): <span
+class="math display">\[\mathbf{T}_{jlm_z}=\sum_{\mu}
+C(l1j;m_z-\mu,\mu)Y_{l}^{m_z-\mu}(\theta,\varphi)\boldsymbol{\xi}_{\mu}\]</span>
+These are called vector spherical harmonics (VSHs). The sum over <span
+class="math inline">\(\mu\)</span> gives the three polarisation
+components, adding up to one value of <span
+class="math inline">\(m_z\)</span>. From the VSHs, the electric and
+magnetic multipoles can be derived by imposing rules for addition of
+angular momenta and parity considerations<span class="citation"
+data-cites="comparison"></span>, that simplify the VSHs to those with
+<span class="math inline">\(l=j, j+1\)</span> or <span
+class="math inline">\(j-1\)</span>. Then, leaving only the <span
+class="math inline">\(l\)</span> index, the multipoles are written as
+the product of the spatial and angular components, <span
+class="math display">\[\begin{aligned}
+    \text{Magnetic:}\qquad&amp;\mathbf{A}^{(m)}_{lm_z}=C_l^{(m)}\zeta_l(kr)\mathbf{T}_{llm_z}(\theta,\varphi)\\
+    \text{Electric:}\qquad&amp;\mathbf{A}^{(e)}_{lm_z}=C_{l+1}^{(e)}\zeta_{l+1}(kr)\mathbf{T}_{l,l+1,m_z}(\theta,\varphi)+
+    C_{l-1}^{(e)}\zeta_{l-1}(kr)\mathbf{T}_{l,l-1,m_z}(\theta,\varphi),
+\end{aligned}\]</span><br />
+where the coefficients represent normalisation (or gauge)
+constants.<br />
+In this basis with these VSHs, one can also expand a circularly
+polarised plane wave propagating in z as <span
+class="math display">\[\label{eq:rosePW}
+    \mathbf{E}_{pw}=ik\mathbf{A}_{pw}=ik\sqrt{2\pi}\sum_{l=1}^{\infty}i^l\sqrt{2l+1}
+    ( \mathbf{A}_{lp}^{(m)}+ip\mathbf{A}_{lp}^{(e)}),\]</span> As in Eq.
+<a href="#eq:PW_sph" data-reference-type="ref"
+data-reference="eq:PW_sph">[eq:PW_sph]</a>, this expansion also only
+sums over the index <span class="math inline">\(j\)</span>, keeping a
+fixed value of <span class="math inline">\(m\)</span> (here <span
+class="math inline">\(p\)</span>, representing the left or right
+circular polarisation). The electric and magnetic multipole are, as in
+Eq. <a href="#eq:PW_sph" data-reference-type="ref"
+data-reference="eq:PW_sph">[eq:PW_sph]</a>, also separated by a phase of
+<span class="math inline">\(i\)</span>.</p>
+<h2 id="limits">Limits</h2>
+<p>As mentioned before, any linear combination of the spherical Bessel
+functions of the first and second kind (also referred to as the
+spherical Bessel, <span class="math inline">\(j_j(kr)\)</span>, and
+Neumann, <span class="math inline">\(y_j(kr)\)</span>, functions)
+satisfy the radial part of the wave equation. However, for <span
+class="math inline">\(r\to0\)</span>, only <span
+class="math inline">\(j_j(kr)\)</span> is regular, while <span
+class="math inline">\(y_j(kr)\)</span> goes to <span
+class="math inline">\(-\infty\)</span>. At <span
+class="math inline">\(r\to\infty\)</span>, both functions are
+oscillating and thus physical. This means that in the expression for the
+multipoles, <span class="math inline">\(\zeta_j(kr)=j_j(kr)\)</span> if
+its domain spans all space. This is for example not the case when
+working with multipoles in a scattering problem. Here, the spherical
+Bessel function will be used inside the scatterer, while the Hankel
+function, <span class="math inline">\(h_j(kr)=j_j(kr)+iy_j(kr)\)</span>,
+is used outside.</p>
+</body>
+</html>

@@ -1,0 +1,44 @@
+\section{\texttt{planeWave}}
+
+\subsection{Description}
+The \texttt{planeWave} class applies the \texttt{Multipoles} class to model plane waves, that can be used for interactions with a spherical scatterer. It computes multipolar field contributions for specified polarizations (linear or circular) and supports visualization of field components or total intensity. The implementation uses vector spherical harmonics and sets beam coefficients to unity for plane waves, simplifying the multipolar expansion.
+
+\subsection{Initialization}
+Creating an instance of the \texttt{planeWave} class initializes the beam parameters, spherical coordinate grids, and multipolar coefficients. It inherits from the \texttt{Multipoles} class, using its parameters (\texttt{l\_max}, \texttt{m\_max}, \texttt{wl}, \texttt{domain}, \texttt{nr}, \texttt{radius}) and sets up the plane wave properties with a fixed \texttt{maxJ = 40} for a good approximation.
+
+\begin{verbatim}
+planeWave(wavelength, domain, polarization="x")
+\end{verbatim}
+
+\begin{description}[leftmargin=3cm]
+    \item[wavelength:] float — wavelength of the incident beam (in microns).
+    \item[domain:] \texttt{domain\_class} object — spatial domain for field evaluation.
+    \item[polarization:] str — polarization type: \texttt{"x"}, \texttt{"y"}, \texttt{"left circular"}, or \texttt{"right circular"}. Defaults to \texttt{"x"}.
+\end{description}
+
+\subsection{Methods}
+\begin{description}[leftmargin=4cm]
+    \item[\texttt{compute\_sum(spatial\_fun="bessel")}] \hfill \\
+    Computes the total multipolar field for the plane wave by summing over \( j \)-indexed electric and magnetic multipole contributions:
+    \begin{equation}
+    A = \sum_{j=1}^{{\text{max}_j}} i^j \sqrt{2j+1} \left[ A_{j m_z}^{(m)} + i p A_{j m_z}^{(e)} \right]
+    \end{equation}
+    where \( A_{j m_z}^{(e/m)} \) are computed using \texttt{get\_multipoles()} with the selected \texttt{spatial\_fun} (\texttt{"bessel"}, \texttt{"hankel"}, etc.).
+
+    \item[\texttt{compute\_pol()}] \hfill \\
+    Returns the analytic field profile for a plane wave with given polarization in the circular or Cartesian basis, e.g. $A=\exp{ikz}\mathbf{e_x}$ for polarization in $x$. Used for visualization and comparison. Also returns labels for the field components.
+
+    \item[\texttt{plot\_beam(plot="components", globalnorm=False)}] \hfill \\
+    Visualizes the real part of the plane wave field across all defined planes (to confirm oscillations in the direction of propagation instead of a constant value). Can display:
+    \begin{itemize}
+        \item Individual components: \texttt{plot="components"}
+        \item Total intensity: \texttt{plot="total"}
+    \end{itemize}
+    The \texttt{globalnorm} flag sets whether all plots share a common color scale.
+
+\end{description}
+
+\subsection{Comments}
+\begin{itemize}
+    \item The class currently supports polarizations: \texttt{"x"}, \texttt{"y"}, \texttt{"left circular"}, and \texttt{"right circular"}.
+\end{itemize}

@@ -1,0 +1,79 @@
+\section{\texttt{focusedBeam}}
+
+\subsection{Description}
+The \texttt{focusedBeam} class extends the \texttt{Multipoles} class to model cylindrically symmetric Laguerre-Gaussian beams focused by an aplanatic lens (see e.g. Novotny \& Hecht \cite{nanooptics}). It computes beam coefficients \( C_{j m_z p} \) for a multipolar expansion, evaluates the electric field of the beam, and supports visualization of intensity separated in the circular polarization components or total intensity. The implementation accounts for lens properties (numerical aperture, focal length) and beam parameters (AM, helicity). It is largely based on the PhD Thesis by Xavier Zambrana-Puyalto\cite{xavi}.
+
+\subsection{Initialization}
+Creating an instance of the \texttt{focusedBeam} class initializes the beam parameters, spherical coordinate grids, and multipolar coefficients. It inherits from the \texttt{Multipoles} class, using its parameters (\texttt{l\_max}, \texttt{m\_max}, \texttt{wl}, \texttt{domain}, \texttt{nr}, \texttt{radius}) and sets up the Laguerre-Gaussian beam properties.
+
+\begin{verbatim}
+focusedBeam(maxJ, wavelength, domain, p=1, l=0, q=0, NA=0.9, f=1000, n_lens=1)
+\end{verbatim}
+
+\begin{description}[leftmargin=3cm]
+    \item[\texttt{maxJ:}] int — maximum total angular momentum quantum number.
+    \item[\texttt{wavelength:}] float — wavelength of the incident beam (in microns).
+    \item[\texttt{domain:}] \texttt{domain\_class} object — spatial domain for field evaluation.
+    \item[\texttt{p:}] int — helicity of the beam before focusing (\texttt{-1} or \texttt{1}, default is 1).
+    \item[\texttt{l:}] int — azimuthal number of the beam (default is 0).
+    \item[\texttt{q:}] int — radial index of the beam (default is 0).
+    \item[\texttt{NA:}] float — numerical aperture of the focusing lens (default is 0.9). Allowed values are $0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8 \& 0.9$.
+    \item[\texttt{f:}] float — focal length of the lens (in microns, default is 1000).
+    \item[\texttt{n\_lens:}] float — refractive index of the lens medium (default is 1).
+\end{description}
+
+\subsection{Methods}
+\begin{description}[leftmargin=4cm]
+    \item[\texttt{d\_jmp(j, m, p, Theta)}] \hfill \\
+    Computes the Wigner small-d function \( d_{m p}^j(\Theta) \) for given quantum numbers \( j \), \( m \), and \( p \) at angle \( \Theta \). The function is defined as:
+    \begin{equation}
+    \begin{aligned}
+        d_{m p}^j(\Theta) = (-1)^{\frac{p - m - |m - p|}{2}} &\exp\left( \frac{1}{2} \left[ \ln \Gamma(j - M + 1) + \ln \Gamma(j + M + 1) \right.\right. \\
+        &\left.\left.- \ln \Gamma(j + N + 1) - \ln \Gamma(j - N + 1) \right] \right) \\
+        &\cdot \cos\left(\frac{\Theta}{2}\right)^{|m + p|} \sin\left(\frac{\Theta}{2}\right)^{|m - p|} P_{j - M}^{|m - p|, |m + p|}(\cos \Theta),
+    \end{aligned}
+    \end{equation}
+    where \( M = \max(|m|, |p|) \), \( N = \min(|m|, |p|) \), and \( P_n^{\alpha, \beta} \) is the Jacobi polynomial evaluated using \texttt{scipy.special.eval\_jacobi}.
+
+    \item[\texttt{BeamCoeffs(l=None, p=None, q=None)}] \hfill \\
+    Computes the beam coefficients \( C_{j m_z p} \) for the Laguerre-Gaussian beam with quantum numbers \( l \), \( p \), and \( q \). The coefficient is calculated via numerical integration over the lens aperture:
+    \begin{equation}\label{eq:Cjmz}
+        C_{j m_z p} = \int_0^{\theta_{\text{max}}} \sin\theta \, f e^{-i k f} \sqrt{2\pi} \sqrt{n_{\text{lens}} \cos\theta} \, \text{LG}(q, l,\theta) \, d_{m_z p}^j(\theta) \, d\theta,
+    \end{equation}
+    where \( m_z = l + p \), \( \theta_{\text{max}} = \arcsin(\text{NA} / n_{\text{lens}}) \), \( f \) is the focal length, \( k = 2\pi / \lambda \), and \( \text{LG}(q,l,\theta) \) is the Laguerre-Gaussian beam amplitude defined with another method. Returns the coefficients \( C \), the lens integral (which should be as close to unity as possible), and the normalization sum \( \sum_j (2j + 1) |C_j|^2 \), ideally close to 2\cite{xavi}.
+
+    \item[\texttt{plotBeamCoeffs(l=None, p=None, q=None)}] \hfill \\
+    Visualizes the squared magnitude of beam coefficients \( |C_{j m_z p}|^2 \) as a bar plot for specified \( l \), \( p \), and \( q \). The plot displays contributions for \( j \) from \( \max(|m_z|, 1) \) to \texttt{maxJ}, with optional multiple parameter combinations.
+
+    \item[\texttt{LaguerreGauss(q, l, rho, z, **kwargs)}] \hfill \\
+    Computes the Laguerre-Gaussian beam amplitude at radial distance \( \rho \) and axial position \( z \). The amplitude is given by:
+    \begin{equation}
+    \begin{aligned}
+        \text{LG} = \exp\bigg( \ln N(l, q) &- \frac{\rho^2}{w^2} + l \ln \rho + (l + 1) \left( \frac{1}{2} \ln 2 - \ln w \right)
+         \bigg) L_q^l\left( \frac{2 \rho^2}{w^2} \right),
+    \end{aligned}
+    \end{equation}
+    where \( N(l, q) = \sqrt{\frac{q!}{\pi (q + l)!}} \) is the normalization factor, \( w \) is the beam waist, \( k = 2\pi / \lambda \), and \( L_q^l \) is the generalized Laguerre polynomial.
+
+    \item[\texttt{get\_w(NA, l)}] \hfill \\
+    Returns the beam waist \( w \) (in microns) for a given numerical aperture \texttt{NA} and orbital quantum number \( l \), based on precomputed values for \texttt{NA} = 0.25, 0.3, 0.5, or 0.9. Beam waist values are computed such that they fill the lens completely and the sum is truncated appropriately\cite{xavi}. 
+
+    \item[\texttt{compute\_sum(l, p, q, spatial\_fun="bessel")}] \hfill \\
+    Computes the total electric field for the focused beam by summing electric and magnetic contributions:
+    \begin{equation}
+        E = \sum_{j=j_0}^{j_{\text{max}}} i^j \sqrt{2j + 1} C_j \left[ A_{j m}^{(m)} + i p A_{j m}^{(e)} \right],
+    \end{equation}
+    where \( j_0 = \max(|m|, 1) \), \( m = l + p \), \( C_j \) are beam coefficients, and \( A_{j m}^{(m/e)} \) are multipole fields computed via \texttt{get\_multipoles}.
+
+    \item[\texttt{plot\_beam(plot="components", globalnorm=False)}] \hfill \\
+    Visualizes the computed multipolar field sum. When called, the beam object is displayed.\\
+    Plots either individual polarization components (\texttt{plot="components"}, showing \( \xi_1, \xi_0, \xi_{-1} \)) or total intensity (\texttt{plot="total"}) across defined planes. The field intensity is computed as \( |E|^2 \).
+    \begin{description}[leftmargin=1cm]
+        \item[\texttt{plot:}] str — plot type: \texttt{"components"} or \texttt{"total"}.
+        \item[\texttt{globalnorm:}] bool — if \texttt{True}, normalizes all plots to the global maximum; otherwise, each plot is normalized individually.
+    \end{description}
+\end{description}
+
+\subsection{Comments}
+The beam waist values in \texttt{get\_w} are limited to specific \texttt{NA} values; interpolating for arbitrary \texttt{NA} could improve flexibility. 
+
