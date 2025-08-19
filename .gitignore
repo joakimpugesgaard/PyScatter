@@ -1,9 +1,14 @@
 __pycache__/
 *.pyc
-displaced_beams.ipynb
-interaction_class.ipynb
-decomp_class.ipynb
+/newvenv/
+/images/
+/main/
+/newvenv3/
+/newvenv2/
 /treams/
+/tmp/
+/tmp2/
+/test1/
 *.zip
 *.pdf
 *.DS_store

@@ -1,0 +1,6 @@
+scipy>=1.15
+numpy>=1.26
+matplotlib>=3.9
+pandas>=2.1
+treams>=0.4.6
+
