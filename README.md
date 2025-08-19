@@ -4,6 +4,6 @@ A Python library for calculating and visualizing interactions between light and 
 
 ## Installation
 ```bash
-git clone https://github.com/yourusername/MieScat.git
-cd MieScat
+git clone https://github.com/joakimpugesgaard/PyScatter.git
+cd PyScatter
 pip install -r requirements.txt
