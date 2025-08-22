@@ -4,153 +4,8 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>focusedbeams</title>
+  <title>FocusedBeam Documentation</title>
   <style>
-    html {
-      color: #1a1a1a;
-      background-color: #fdfdfd;
-    }
-    body {
-      margin: 0 auto;
-      max-width: 36em;
-      padding-left: 50px;
-      padding-right: 50px;
-      padding-top: 50px;
-      padding-bottom: 50px;
-      hyphens: auto;
-      overflow-wrap: break-word;
-      text-rendering: optimizeLegibility;
-      font-kerning: normal;
-    }
-    @media (max-width: 600px) {
-      body {
-        font-size: 0.9em;
-        padding: 12px;
-      }
-      h1 {
-        font-size: 1.8em;
-      }
-    }
-    @media print {
-      html {
-        background-color: white;
-      }
-      body {
-        background-color: transparent;
-        color: black;
-        font-size: 12pt;
-      }
-      p, h2, h3 {
-        orphans: 3;
-        widows: 3;
-      }
-      h2, h3, h4 {
-        page-break-after: avoid;
-      }
-    }
-    p {
-      margin: 1em 0;
-    }
-    a {
-      color: #1a1a1a;
-    }
-    a:visited {
-      color: #1a1a1a;
-    }
-    img {
-      max-width: 100%;
-    }
-    svg {
-      height: auto;
-      max-width: 100%;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      margin-top: 1.4em;
-    }
-    h5, h6 {
-      font-size: 1em;
-      font-style: italic;
-    }
-    h6 {
-      font-weight: normal;
-    }
-    ol, ul {
-      padding-left: 1.7em;
-      margin-top: 1em;
-    }
-    li > ol, li > ul {
-      margin-top: 0;
-    }
-    blockquote {
-      margin: 1em 0 1em 1.7em;
-      padding-left: 1em;
-      border-left: 2px solid #e6e6e6;
-      color: #606060;
-    }
-    code {
-      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
-      font-size: 85%;
-      margin: 0;
-      hyphens: manual;
-    }
-    pre {
-      margin: 1em 0;
-      overflow: auto;
-    }
-    pre code {
-      padding: 0;
-      overflow: visible;
-      overflow-wrap: normal;
-    }
-    .sourceCode {
-     background-color: transparent;
-     overflow: visible;
-    }
-    hr {
-      border: none;
-      border-top: 1px solid #1a1a1a;
-      height: 1px;
-      margin: 1em 0;
-    }
-    table {
-      margin: 1em 0;
-      border-collapse: collapse;
-      width: 100%;
-      overflow-x: auto;
-      display: block;
-      font-variant-numeric: lining-nums tabular-nums;
-    }
-    table caption {
-      margin-bottom: 0.75em;
-    }
-    tbody {
-      margin-top: 0.5em;
-      border-top: 1px solid #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    th {
-      border-top: 1px solid #1a1a1a;
-      padding: 0.25em 0.5em 0.25em 0.5em;
-    }
-    td {
-      padding: 0.125em 0.5em 0.25em 0.5em;
-    }
-    header {
-      margin-bottom: 4em;
-      text-align: center;
-    }
-    #TOC li {
-      list-style: none;
-    }
-    #TOC ul {
-      padding-left: 1.3em;
-    }
-    #TOC > ul {
-      padding-left: 0;
-    }
-    #TOC a:not(:hover) {
-      text-decoration: none;
-    }
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -165,7 +20,28 @@
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
     }
-  </style>
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+      margin-bottom: 0em;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
+  <link rel="stylesheet" href="style.css" />
   <script
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
   type="text/javascript"></script>
@@ -176,15 +52,15 @@
 <p>The <code>focusedBeam</code> class extends the
 <code>Multipoles</code> class to model cylindrically symmetric
 Laguerre-Gaussian beams focused by an aplanatic lens (see e.g. Novotny
-&amp; Hecht <span class="citation" data-cites="nanooptics"></span>). It
-computes beam coefficients <span class="math inline">\(C_{j m_z
-p}\)</span> for a multipolar expansion, evaluates the electric field of
-the beam, and supports visualization of intensity separated in the
-circular polarization components or total intensity. The implementation
-accounts for lens properties (numerical aperture, focal length) and beam
-parameters (AM, helicity). It is largely based on the PhD Thesis by
-Xavier Zambrana-Puyalto<span class="citation"
-data-cites="xavi"></span>.</p>
+&amp; Hecht <span class="citation" data-cites="nanooptics">(Novotny and
+Hecht 2012)</span>). It computes beam coefficients <span
+class="math inline">\(C_{j m_z p}\)</span> for a multipolar expansion,
+evaluates the electric field of the beam, and supports visualization of
+intensity separated in the circular polarization components or total
+intensity. The implementation accounts for lens properties (numerical
+aperture, focal length) and beam parameters (AM, helicity). It is
+largely based on the PhD Thesis by Xavier Zambrana-Puyalto<span
+class="citation" data-cites="xavi">(Zambrana-Puyalto 2014)</span>.</p>
 <h2 id="initialization">Initialization</h2>
 <p>Creating an instance of the <code>focusedBeam</code> class
 initializes the beam parameters, spherical coordinate grids, and
@@ -253,7 +129,7 @@ the coefficients <span class="math inline">\(C\)</span>, the lens
 integral (which should be as close to unity as possible), and the
 normalization sum <span class="math inline">\(\sum_j (2j + 1)
 |C_j|^2\)</span>, ideally close to 2<span class="citation"
-data-cites="xavi"></span>.</p>
+data-cites="xavi">(Zambrana-Puyalto 2014)</span>.</p>
 <p><br />
 Visualizes the squared magnitude of beam coefficients <span
 class="math inline">\(|C_{j m_z p}|^2\)</span> as a bar plot for
@@ -284,7 +160,7 @@ quantum number <span class="math inline">\(l\)</span>, based on
 precomputed values for <code>NA</code> = 0.25, 0.3, 0.5, or 0.9. Beam
 waist values are computed such that they fill the lens completely and
 the sum is truncated appropriately<span class="citation"
-data-cites="xavi"></span>.</p>
+data-cites="xavi">(Zambrana-Puyalto 2014)</span>.</p>
 <p><br />
 Computes the total electric field for the focused beam by summing
 electric and magnetic contributions: <span class="math display">\[E =
@@ -314,5 +190,17 @@ maximum; otherwise, each plot is normalized individually.</p>
 <p>The beam waist values in <code>get_w</code> are limited to specific
 <code>NA</code> values; interpolating for arbitrary <code>NA</code>
 could improve flexibility.</p>
+<div id="refs" class="references csl-bib-body hanging-indent"
+data-entry-spacing="0" role="list">
+<div id="ref-nanooptics" class="csl-entry" role="listitem">
+Novotny, L., and B. Hecht. 2012. <em>Principles of Nano-Optics</em>. 2nd
+ed. Cambridge University Press.
+</div>
+<div id="ref-xavi" class="csl-entry" role="listitem">
+Zambrana-Puyalto, Xavier. 2014. <span>“Control and Characterization of
+Nano-Structures with the Symmetries of Light.”</span> PhD thesis,
+Macquarie University.
+</div>
+</div>
 </body>
 </html>
