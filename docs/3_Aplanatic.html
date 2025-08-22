@@ -20,27 +20,7 @@
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
     }
-    /* CSS for citations */
-    div.csl-bib-body { }
-    div.csl-entry {
-      clear: both;
-      margin-bottom: 0em;
-    }
-    .hanging-indent div.csl-entry {
-      margin-left:2em;
-      text-indent:-2em;
-    }
-    div.csl-left-margin {
-      min-width:2em;
-      float:left;
-    }
-    div.csl-right-inline {
-      margin-left:2em;
-      padding-left:1em;
-    }
-    div.csl-indent {
-      margin-left: 2em;
-    }  </style>
+  </style>
   <link rel="stylesheet" href="style.css" />
   <script
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
@@ -54,14 +34,14 @@ multipoles for both of the approaches for comparison. In real scattering
 experiments, one often works with waves that are cylindrically symmetric
 and not plane. These are beams that are more complicated, as they can be
 decomposed into <em>many</em> plane waves<span class="citation"
-data-cites="xavi">(Zambrana-Puyalto 2014)</span>. This section will
-describe how to model a monochromatic, non-paraxial, and cylindrically
-symmetric beam with a well-defined helicity using the <em>aplanatic lens
-model</em>, which is explained both in <span class="citation"
-data-cites="nanooptics">(Novotny and Hecht 2012)</span> and <span
-class="citation" data-cites="xavi">(Zambrana-Puyalto 2014)</span>. Then,
-a brief description of the implementation will be given along with
-different visualisations of the fields.</p>
+data-cites="xavi">[@xavi]</span>. This section will describe how to
+model a monochromatic, non-paraxial, and cylindrically symmetric beam
+with a well-defined helicity using the <em>aplanatic lens model</em>,
+which is explained both in <span class="citation"
+data-cites="nanooptics">[@nanooptics]</span> and <span class="citation"
+data-cites="xavi">[@xavi]</span>. Then, a brief description of the
+implementation will be given along with different visualisations of the
+fields.</p>
 <h2 id="the-aplanatic-lens-model">The aplanatic lens model</h2>
 <p>The idea of the aplanatic lens model is to describe a focused beam as
 a transformation by a lens of an incident beam. In later chapters, a
@@ -70,10 +50,12 @@ class="math inline">\(f\)</span>, making the model quite realistic. The
 focusing is illustrated in Fig. <a href="#fig:aplanatic"
 data-reference-type="ref" data-reference="fig:aplanatic">1</a>.</p>
 <figure id="fig:aplanatic">
-<img src="Figures/aplanatic_lens.png" style="width:50.0%" />
-<figcaption>Sketch of the focusing of a light beam (here represented
-only by its electric field) by an aplanatic lens.<span class="citation"
-data-cites="nanooptics">(Novotny and Hecht 2012)</span></figcaption>
+<img src="Figures/aplanatic_lens.png" style="width:50.0%"
+alt="Figure 1: Sketch of the focusing of a light beam (here represented only by its electric field) by an aplanatic lens.[@nanooptics]" />
+<figcaption aria-hidden="true">Figure 1: Sketch of the focusing of a
+light beam (here represented only by its electric field) by an aplanatic
+lens.<span class="citation"
+data-cites="nanooptics">[@nanooptics]</span></figcaption>
 </figure>
 <p>I will not go through the derivation of the expression for the
 focused field in great detail, but only lay out the overall steps.<br />
@@ -91,20 +73,19 @@ are still conserved after focusing (helicity <span
 class="math inline">\(p=1\)</span> will be used in this study).<br />
 The focused field, which naturally depends on the expression of the
 incident field, can be expressed as an expansion in multipoles. In <span
-class="citation" data-cites="xavi">(Zambrana-Puyalto 2014)</span>, the
-multipolar decomposition of a Laguerre-Gaussian beam is provided. The
-modes of such a beam, <span
-class="math inline">\(\mathrm{LG}_l^q\)</span>, are cylindrically
-symmetric solutions of the paraxial equation. <span
+class="citation" data-cites="xavi">[@xavi]</span>, the multipolar
+decomposition of a Laguerre-Gaussian beam is provided. The modes of such
+a beam, <span class="math inline">\(\mathrm{LG}_l^q\)</span>, are
+cylindrically symmetric solutions of the paraxial equation. <span
 class="math inline">\(q\)</span>, the so-called radial index, is assumed
 to be 0 throughout this report, while <span class="math inline">\(l\in
 \mathbb{Z}\)</span>, which is related to the AM content, will be
 varied.<br />
 When focused by an aplanatic lens, an electric field containing LG modes
 becomes a solution of not only the paraxial equation but also Maxwell’s
-equations<span class="citation" data-cites="xavi">(Zambrana-Puyalto
-2014)</span>. Such a field with a single LG mode has the expression
-<span class="math display">\[\label{eq:Efoc}
+equations<span class="citation" data-cites="xavi">[@xavi]</span>. Such a
+field with a single LG mode has the expression <span
+class="math display">\[\label{eq:Efoc}
     \mathbf{E}_{foc}=\sum_{j=\abs{m_z}}^\infty
 i^j\sqrt{2j+1}C_{jm_zp}\left[
     \mathbf{A}_{jm_z}^{(m)}+ip\mathbf{A}_{jm_z}^{(e)}\right]\]</span>
@@ -162,10 +143,10 @@ fields can be plotted in 3D.</p>
 <figcaption>NA=0.9, l=2, <span class="math inline">\(w=390\
 \mathrm{\upmu m}\)</span></figcaption>
 </figure>
-<figcaption>2D slices of 3-dimensional intensity plots of focused
-z-propagating LG beams for different lens and beam parameters. XY slices
-correspond to a transverse slice of the beam. The XZ slices show the
-beam along its direction of propagation.</figcaption>
+<figcaption>Figure 2: 2D slices of 3-dimensional intensity plots of
+focused z-propagating LG beams for different lens and beam parameters.
+XY slices correspond to a transverse slice of the beam. The XZ slices
+show the beam along its direction of propagation.</figcaption>
 </figure>
 <p>Examples of focused beams are shown in Fig. <a href="#fig:Efoc"
 data-reference-type="ref" data-reference="fig:Efoc">6</a> for two values
@@ -220,8 +201,8 @@ single multipole.</p>
 <img src="Figures/contentl6.png" />
 <figcaption>l=6</figcaption>
 </figure>
-<figcaption>Histograms of the multipolar content of the expansion in Eq.
-<a href="#eq:Efoc" data-reference-type="ref"
+<figcaption>Figure 3: Histograms of the multipolar content of the
+expansion in Eq. <a href="#eq:Efoc" data-reference-type="ref"
 data-reference="eq:Efoc">[eq:Efoc]</a>.<span
 class="math inline">\(\abs{C_{jm_zp}}^2\)</span> is plotted for each
 order <span class="math inline">\(j\)</span> for NA=0.9 (blue) and
@@ -235,26 +216,15 @@ href="#fig:mcontent" data-reference-type="ref"
 data-reference="fig:mcontent">11</a> that the distribution broadens and
 shifts toward higher <span class="math inline">\(j\)</span>.</p>
 <figure id="fig:Cj_NA09">
-<img src="Figures/C_NA09.png" style="width:90.0%" />
-<figcaption>Colour plot of the multipolar distribution of <span
-class="math inline">\(\abs{C_{jm_z}}^2\)</span> for <span
-class="math inline">\(l=0\)</span> to <span
+<img src="Figures/C_NA09.png" style="width:90.0%"
+alt="Figure 4: Colour plot of the multipolar distribution of \abs{C_{jm_z}}^2 for l=0 to l=8 for NA=0.9. The values on the left are on absolute scale. On the right, each row (l) is normalised to its own maximum, highlighting the dominant modes more." />
+<figcaption aria-hidden="true">Figure 4: Colour plot of the multipolar
+distribution of <span class="math inline">\(\abs{C_{jm_z}}^2\)</span>
+for <span class="math inline">\(l=0\)</span> to <span
 class="math inline">\(l=8\)</span> for NA=0.9. The values on the left
 are on absolute scale. On the right, each row (<span
 class="math inline">\(l\)</span>) is normalised to its own maximum,
 highlighting the dominant modes more.</figcaption>
 </figure>
-<div id="refs" class="references csl-bib-body hanging-indent"
-data-entry-spacing="0" role="list">
-<div id="ref-nanooptics" class="csl-entry" role="listitem">
-Novotny, L., and B. Hecht. 2012. <em>Principles of Nano-Optics</em>. 2nd
-ed. Cambridge University Press.
-</div>
-<div id="ref-xavi" class="csl-entry" role="listitem">
-Zambrana-Puyalto, Xavier. 2014. <span>“Control and Characterization of
-Nano-Structures with the Symmetries of Light.”</span> PhD thesis,
-Macquarie University.
-</div>
-</div>
 </body>
 </html>
