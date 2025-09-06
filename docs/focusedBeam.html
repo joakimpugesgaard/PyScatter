@@ -4,8 +4,153 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>FocusedBeam Documentation</title>
+  <title>focusedBeam</title>
   <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -41,7 +186,6 @@
     div.csl-indent {
       margin-left: 2em;
     }  </style>
-  <link rel="stylesheet" href="style.css" />
   <script
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
   type="text/javascript"></script>
@@ -51,7 +195,7 @@
 <h2 id="description">Description</h2>
 <p>The <code>focusedBeam</code> class extends the
 <code>Multipoles</code> class to model cylindrically symmetric
-Laguerre-Gaussian beams focused by an aplanatic lens (see e.g. Novotny
+Laguerre-Gaussian beams focused by an aplanatic lens (see e.g., Novotny
 &amp; Hecht <span class="citation" data-cites="nanooptics">(Novotny and
 Hecht 2012)</span>). It computes beam coefficients <span
 class="math inline">\(C_{j m_z p}\)</span> for a multipolar expansion,
@@ -59,7 +203,7 @@ evaluates the electric field of the beam, and supports visualization of
 intensity separated in the circular polarization components or total
 intensity. The implementation accounts for lens properties (numerical
 aperture, focal length) and beam parameters (AM, helicity). It is
-largely based on the PhD Thesis by Xavier Zambrana-Puyalto<span
+largely based on the PhD thesis by Xavier Zambrana-Puyalto <span
 class="citation" data-cites="xavi">(Zambrana-Puyalto 2014)</span>.</p>
 <h2 id="initialization">Initialization</h2>
 <p>Creating an instance of the <code>focusedBeam</code> class
@@ -70,25 +214,53 @@ class, using its parameters (<code>l_max</code>, <code>m_max</code>,
 <code>radius</code>) and sets up the Laguerre-Gaussian beam
 properties.</p>
 <pre><code>focusedBeam(maxJ, wavelength, domain, p=1, l=0, q=0, NA=0.9, f=1000, n_lens=1)</code></pre>
-<div class="description">
+<dl>
+<dt><code>maxJ:</code></dt>
+<dd>
 <p>int — maximum total angular momentum quantum number.</p>
+</dd>
+<dt><code>wavelength:</code></dt>
+<dd>
 <p>float — wavelength of the incident beam (in microns).</p>
+</dd>
+<dt><code>domain:</code></dt>
+<dd>
 <p><code>domain_class</code> object — spatial domain for field
 evaluation.</p>
+</dd>
+<dt><code>p:</code></dt>
+<dd>
 <p>int — helicity of the beam before focusing (<code>-1</code> or
 <code>1</code>, default is 1).</p>
+</dd>
+<dt><code>l:</code></dt>
+<dd>
 <p>int — azimuthal number of the beam (default is 0).</p>
+</dd>
+<dt><code>q:</code></dt>
+<dd>
 <p>int — radial index of the beam (default is 0).</p>
+</dd>
+<dt><code>NA:</code></dt>
+<dd>
 <p>float — numerical aperture of the focusing lens (default is 0.9).
 Allowed values are <span class="math inline">\(0.25, 0.3, 0.4, 0.5, 0.6,
-0.7, 0.8 \&amp; 0.9\)</span>.</p>
+0.7, 0.8, 0.9\)</span>.</p>
+</dd>
+<dt><code>f:</code></dt>
+<dd>
 <p>float — focal length of the lens (in microns, default is 1000).</p>
+</dd>
+<dt><code>n_lens:</code></dt>
+<dd>
 <p>float — refractive index of the lens medium (default is 1).</p>
-</div>
+</dd>
+</dl>
 <h2 id="methods">Methods</h2>
-<div class="description">
-<p><br />
-Computes the Wigner small-d function <span class="math inline">\(d_{m
+<dl>
+<dt><code>d_jmp(j, m, p, Theta)</code></dt>
+<dd>
+<p>Computes the Wigner small-d function <span class="math inline">\(d_{m
 p}^j(\Theta)\)</span> for given quantum numbers <span
 class="math inline">\(j\)</span>, <span
 class="math inline">\(m\)</span>, and <span
@@ -97,9 +269,9 @@ class="math inline">\(\Theta\)</span>. The function is defined as: <span
 class="math display">\[\begin{aligned}
         d_{m p}^j(\Theta) = (-1)^{\frac{p - m - |m - p|}{2}}
 &amp;\exp\left( \frac{1}{2} \left[ \ln \Gamma(j - M + 1) + \ln \Gamma(j
-+ M + 1) \right.\right. \\
++ M + 1) \right.\right.
         &amp;\left.\left.- \ln \Gamma(j + N + 1) - \ln \Gamma(j - N + 1)
-\right] \right) \\
+\right] \right)
         &amp;\cdot \cos\left(\frac{\Theta}{2}\right)^{|m + p|}
 \sin\left(\frac{\Theta}{2}\right)^{|m - p|} P_{j - M}^{|m - p|, |m +
 p|}(\cos \Theta),
@@ -108,8 +280,10 @@ p|}(\cos \Theta),
 |p|)\)</span>, and <span class="math inline">\(P_n^{\alpha,
 \beta}\)</span> is the Jacobi polynomial evaluated using
 <code>scipy.special.eval_jacobi</code>.</p>
-<p><br />
-Computes the beam coefficients <span class="math inline">\(C_{j m_z
+</dd>
+<dt><code>BeamCoeffs(l=None, p=None, q=None)</code></dt>
+<dd>
+<p>Computes the beam coefficients <span class="math inline">\(C_{j m_z
 p}\)</span> for the Laguerre-Gaussian beam with quantum numbers <span
 class="math inline">\(l\)</span>, <span
 class="math inline">\(p\)</span>, and <span
@@ -117,21 +291,23 @@ class="math inline">\(q\)</span>. The coefficient is calculated via
 numerical integration over the lens aperture: <span
 class="math display">\[\label{eq:Cjmz}
         C_{j m_z p} = \int_0^{\theta_{\text{max}}} \sin\theta \, f e^{-i
-k f} \sqrt{2\pi} \sqrt{n_{\text{lens}} \cos\theta} \, \text{LG}(q,
-l,\theta) \, d_{m_z p}^j(\theta) \, d\theta,\]</span> where <span
+k f} \sqrt{2\pi} \sqrt{n_{\text{lens}} \cos\theta} \, \text{LG}(q, l,
+\theta) \, d_{m_z p}^j(\theta) \, d\theta,\]</span> where <span
 class="math inline">\(m_z = l + p\)</span>, <span
 class="math inline">\(\theta_{\text{max}} = \arcsin(\text{NA} /
 n_{\text{lens}})\)</span>, <span class="math inline">\(f\)</span> is the
 focal length, <span class="math inline">\(k = 2\pi / \lambda\)</span>,
-and <span class="math inline">\(\text{LG}(q,l,\theta)\)</span> is the
+and <span class="math inline">\(\text{LG}(q, l, \theta)\)</span> is the
 Laguerre-Gaussian beam amplitude defined with another method. Returns
 the coefficients <span class="math inline">\(C\)</span>, the lens
 integral (which should be as close to unity as possible), and the
 normalization sum <span class="math inline">\(\sum_j (2j + 1)
-|C_j|^2\)</span>, ideally close to 2<span class="citation"
+|C_j|^2\)</span>, ideally close to 2 <span class="citation"
 data-cites="xavi">(Zambrana-Puyalto 2014)</span>.</p>
-<p><br />
-Visualizes the squared magnitude of beam coefficients <span
+</dd>
+<dt><code>plotBeamCoeffs(l=None, p=None, q=None)</code></dt>
+<dd>
+<p>Visualizes the squared magnitude of beam coefficients <span
 class="math inline">\(|C_{j m_z p}|^2\)</span> as a bar plot for
 specified <span class="math inline">\(l\)</span>, <span
 class="math inline">\(p\)</span>, and <span
@@ -139,30 +315,36 @@ class="math inline">\(q\)</span>. The plot displays contributions for
 <span class="math inline">\(j\)</span> from <span
 class="math inline">\(\max(|m_z|, 1)\)</span> to <code>maxJ</code>, with
 optional multiple parameter combinations.</p>
-<p><br />
-Computes the Laguerre-Gaussian beam amplitude at radial distance <span
-class="math inline">\(\rho\)</span> and axial position <span
+</dd>
+<dt><code>LaguerreGauss(q, l, rho, z, **kwargs)</code></dt>
+<dd>
+<p>Computes the Laguerre-Gaussian beam amplitude at radial distance
+<span class="math inline">\(\rho\)</span> and axial position <span
 class="math inline">\(z\)</span>. The amplitude is given by: <span
 class="math display">\[\begin{aligned}
-        \text{LG} = \exp\bigg( \ln N(l, q) &amp;- \frac{\rho^2}{w^2} + l
-\ln \rho + (l + 1) \left( \frac{1}{2} \ln 2 - \ln w \right)
-         \bigg) L_q^l\left( \frac{2 \rho^2}{w^2} \right),
+        \text{LG} = \exp\left( \ln N(l, q) - \frac{\rho^2}{w^2} + l \ln
+\rho + (l + 1) \left( \frac{1}{2} \ln 2 - \ln w \right) \right)
+L_q^l\left( \frac{2 \rho^2}{w^2} \right),
     \end{aligned}\]</span> where <span class="math inline">\(N(l, q) =
 \sqrt{\frac{q!}{\pi (q + l)!}}\)</span> is the normalization factor,
 <span class="math inline">\(w\)</span> is the beam waist, <span
 class="math inline">\(k = 2\pi / \lambda\)</span>, and <span
 class="math inline">\(L_q^l\)</span> is the generalized Laguerre
 polynomial.</p>
-<p><br />
-Returns the beam waist <span class="math inline">\(w\)</span> (in
+</dd>
+<dt><code>get_w(NA, l)</code></dt>
+<dd>
+<p>Returns the beam waist <span class="math inline">\(w\)</span> (in
 microns) for a given numerical aperture <code>NA</code> and orbital
 quantum number <span class="math inline">\(l\)</span>, based on
 precomputed values for <code>NA</code> = 0.25, 0.3, 0.5, or 0.9. Beam
 waist values are computed such that they fill the lens completely and
-the sum is truncated appropriately<span class="citation"
+the sum is truncated appropriately <span class="citation"
 data-cites="xavi">(Zambrana-Puyalto 2014)</span>.</p>
-<p><br />
-Computes the total electric field for the focused beam by summing
+</dd>
+<dt><code>compute_sum(l, p, q, spatial_fun="bessel")</code></dt>
+<dd>
+<p>Computes the total electric field for the focused beam by summing
 electric and magnetic contributions: <span class="math display">\[E =
 \sum_{j=j_0}^{j_{\text{max}}} i^j \sqrt{2j + 1} C_j \left[ A_{j m}^{(m)}
 + i p A_{j m}^{(e)} \right],\]</span> where <span
@@ -171,21 +353,28 @@ class="math inline">\(m = l + p\)</span>, <span
 class="math inline">\(C_j\)</span> are beam coefficients, and <span
 class="math inline">\(A_{j m}^{(m/e)}\)</span> are multipole fields
 computed via <code>get_multipoles</code>.</p>
-<p><br />
-Visualizes the computed multipolar field sum. When called, the beam
-object is displayed.<br />
-Plots either individual polarization components
-(<code>plot="components"</code>, showing <span
+</dd>
+<dt><code>plot_beam(plot="components", globalnorm=False)</code></dt>
+<dd>
+<p>Visualizes the computed multipolar field sum. Plots either individual
+polarization components (<code>plot="components"</code>, showing <span
 class="math inline">\(\xi_1, \xi_0, \xi_{-1}\)</span>) or total
 intensity (<code>plot="total"</code>) across defined planes. The field
 intensity is computed as <span class="math inline">\(|E|^2\)</span>.</p>
-<div class="description">
+<dl>
+<dt><code>plot:</code></dt>
+<dd>
 <p>str — plot type: <code>"components"</code> or
 <code>"total"</code>.</p>
+</dd>
+<dt><code>globalnorm:</code></dt>
+<dd>
 <p>bool — if <code>True</code>, normalizes all plots to the global
 maximum; otherwise, each plot is normalized individually.</p>
-</div>
-</div>
+</dd>
+</dl>
+</dd>
+</dl>
 <h2 id="comments">Comments</h2>
 <p>The beam waist values in <code>get_w</code> are limited to specific
 <code>NA</code> values; interpolating for arbitrary <code>NA</code>

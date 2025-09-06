@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>treams_functions</title>
+  <title>treams</title>
   <style>
     html {
       color: #1a1a1a;
@@ -196,29 +196,31 @@
 <p>The <code>treams_functions</code> collection contains three functions
 that enable a connection between <code>PyScatter</code> and
 <code>treams</code>, a T-Matrix based library for scattering
-calculations<span class="citation" data-cites="treams">(Beutel,
+calculations <span class="citation" data-cites="treams">(Beutel,
 Fernandez-Corbaton, and Rockstuhl 2024)</span>. More specifically, it
 allows <code>focusedBeam</code> objects to be defined with
 <code>treams</code> objects, such that this illumination can be used
-with e.g. clusters that and other more complicated systems not available
+with, e.g., clusters and other more complicated systems not available
 with <code>PyScatter</code>. The functions take inputs that define the
-system (materials, positions and sizes of scatterers) with the
+system (materials, positions, and sizes of scatterers) with the
 <code>treams</code> syntax. They return coefficients which, in the
-T-matrix formalism contain enough information to describe the electric
+T-matrix formalism, contain enough information to describe the electric
 field in a given basis.</p>
 <h2 id="initialization">Initialization</h2>
 <p>The three functions <code>focusedBeam_treams()</code>,
-<code>focusedBeam_treams_xs()</code> and
+<code>focusedBeam_treams_xs()</code>, and
 <code>focusedBeam_treams_xs_cluster()</code> are imported with
-<code>from src.treams_functions import *</code>.<br />
-To use the methods, <code>treams</code> needs to be installed in a
-virtual environment, which can be done by writing
-<code>pip install treams </code> in a terminal. More information about
-the different <code>treams</code> objects and methods can be found in
-the documentation <a
+<code>from src.treams_functions import *</code>.</p>
+<p>To use the methods, <code>treams</code> needs to be installed in a
+virtual environment, which can be done by running
+<code>pip install treams</code> in a terminal.</p>
+<p>More information about the different <code>treams</code> objects and
+methods can be found in the documentation <a
 href="https://tfp-photonics.github.io/treams/index.html">here</a>.</p>
 <h2 id="methods">Methods</h2>
-<div class="description">
+<dl>
+<dt><code>focusedBeam_treams(focused_beam, spheres, positions=None, radii=None)</code></dt>
+<dd>
 <p>Interface function between a <code>focusedBeam</code> object and
 <code>treams</code> spheres. Converts the beam coefficients into the
 appropriate spherical wave basis, applies the T-matrix filtering for the
@@ -226,35 +228,59 @@ given <span class="math inline">\(m_z\)</span>-value in <a
 href="#eq:Cjmz" data-reference-type="ref"
 data-reference="eq:Cjmz">[eq:Cjmz]</a>, and returns incident and
 scattered coefficients.</p>
-<div class="description">
+<dl>
+<dt><code>focused_beam:</code></dt>
+<dd>
 <p><code>focusedBeam</code> instance. Contains beam parameters
 (<code>wl</code>, <code>maxJ</code>, <code>mz</code>,
 <code>C</code>).</p>
+</dd>
+<dt><code>spheres:</code></dt>
+<dd>
 <p><code>treams.TMatrix</code> (one scatterer) or list of T-matrices
 (multiple scatterers, corresponding radii inputs needed). Defines one or
 multiple scatterers.</p>
+</dd>
+<dt><code>positions:</code></dt>
+<dd>
 <p>optional array-like. Positions of spheres (<span
 class="math inline">\(N \times 3\)</span>). Defaults to (0,0,0) if not
 provided.</p>
+</dd>
+<dt><code>radii:</code></dt>
+<dd>
 <p>optional array-like. Radii of spheres.</p>
-</div>
+</dd>
+</dl>
 <p><strong>Returns:</strong></p>
 <ul>
 <li><p><code>sca_coeffs</code> — scattered field coefficients.</p></li>
 <li><p><code>beam_coeffs</code> — incident beam coefficients.</p></li>
 <li><p><code>tm</code> — T-matrix object (possibly clustered).</p></li>
 </ul>
+</dd>
+<dt><code>focusedBeam_treams_xs(focused_beam, sphere, position=None)</code></dt>
+<dd>
 <p>Computes scattering and extinction cross-sections for a
 <code>focusedBeam</code> interacting with a single sphere for one or
 more wavevector values. If a list is provided, <span
 class="math inline">\(k0\)</span> values are taken from each
 element.</p>
-<div class="description">
+<dl>
+<dt><code>focused_beam:</code></dt>
+<dd>
 <p><code>focusedBeam</code> instance. Provides beam coefficients.</p>
+</dd>
+<dt><code>sphere:</code></dt>
+<dd>
 <p><code>treams.TMatrix</code> or list. Single or multiple wavevector
 values.</p>
+</dd>
+<dt><code>position:</code></dt>
+<dd>
 <p>optional array-like. Sphere position. Defaults to origin.</p>
-</div>
+</dd>
+</dl>
 <p><strong>Returns:</strong></p>
 <ul>
 <li><p><code>sca</code> — scattering cross-section(s) <span
@@ -262,17 +288,32 @@ class="math inline">\([\text{nm}^2]\)</span>.</p></li>
 <li><p><code>ext</code> — extinction cross-section(s) <span
 class="math inline">\([\text{nm}^2]\)</span>.</p></li>
 </ul>
+</dd>
+<dt><code>focusedBeam_treams_xs_cluster(focused_beam, spheres, positions, k0s)</code></dt>
+<dd>
 <p>Computes scattering and extinction cross-sections for a
 <code>focusedBeam</code> interacting with a cluster of spheres at given
 positions.</p>
-<div class="description">
+<dl>
+<dt><code>focused_beam:</code></dt>
+<dd>
 <p><code>focusedBeam</code> instance. Provides beam coefficients.</p>
+</dd>
+<dt><code>spheres:</code></dt>
+<dd>
 <p>list of <code>treams.TMatrix</code>. Defines cluster of scatterers
 (different radii).</p>
+</dd>
+<dt><code>positions:</code></dt>
+<dd>
 <p>array-like. Positions of spheres (<span class="math inline">\(N
 \times 3\)</span>).</p>
+</dd>
+<dt><code>k0s:</code></dt>
+<dd>
 <p>array-like. Wavenumbers for evaluation.</p>
-</div>
+</dd>
+</dl>
 <p><strong>Returns:</strong></p>
 <ul>
 <li><p><code>sca</code> — list of scattering cross-sections <span
@@ -280,7 +321,8 @@ class="math inline">\([\text{nm}^2]\)</span>.</p></li>
 <li><p><code>ext</code> — list of extinction cross-sections <span
 class="math inline">\([\text{nm}^2]\)</span>.</p></li>
 </ul>
-</div>
+</dd>
+</dl>
 <div id="refs" class="references csl-bib-body hanging-indent"
 data-entry-spacing="0" role="list">
 <div id="ref-treams" class="csl-entry" role="listitem">

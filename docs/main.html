@@ -1,11 +1,156 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>PyScat Documentation</title>
+  <title>PyScat Documentation Version 0.1</title>
   <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -20,15 +165,35 @@
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
     }
-  </style>
-  <link rel="stylesheet" href="style.css" />
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+      margin-bottom: 0em;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
   <script
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
   type="text/javascript"></script>
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">PyScat Documentation</h1>
+<h1 class="title"><code>PyScat</code> Documentation<br />
+Version 0.1</h1>
 </header>
 <p>ocumentclass[11pt]<span>article</span></p>
 <p>ate</p>
@@ -38,5 +203,913 @@
 <li><p><code>numpy</code> version 1.26</p></li>
 <li><p><code>matplotlib</code> version 3.9</p></li>
 </ul>
+<h1 id="domain_class"><code>domain_class</code></h1>
+<h2 id="description">Description</h2>
+<p>This class defines 2-dimensional spatial domains in Cartesian and/or
+spherical coordinates used for field calculations of all multipolar
+fields. The planes are always centered around the origin. It supports
+customizable size, defined in terms of wavelength multiples, with
+customizable resolution and plane selection.</p>
+<h2 id="initialization">Initialization</h2>
+<p>Creating an instance of a <code>domain</code> object initializes the
+desired planes as 2D <code>numpy</code> arrays with a specified
+resolution.</p>
+<pre><code>domain(size, points=150, planes={&#39;xy&#39;, &#39;xz&#39;})</code></pre>
+<dl>
+<dt><code>size:</code></dt>
+<dd>
+<p>float — width of the domain from center to edge in microns.</p>
+</dd>
+<dt><code>points:</code></dt>
+<dd>
+<p>int — number of points along each axis in the grid. Default is
+150.</p>
+</dd>
+<dt><code>planes:</code></dt>
+<dd>
+<p>set — must be any of <code>’xy’</code>, <code>’xz’</code>, or
+<code>’yz’</code>. Defaults to <code>{’xy’, ’xz’}</code>.</p>
+</dd>
+</dl>
+<h2 id="methods">Methods</h2>
+<dl>
+<dt><code>check_params(size, planes, points)</code></dt>
+<dd>
+<p>Ensures <code>size</code> and <code>points</code> are positive
+numbers and <code>planes</code> are valid. Called directly upon
+initialization.</p>
+</dd>
+<dt><code>cart_grid()</code></dt>
+<dd>
+<p>Defines 2D Cartesian grids based on inputs. Returns a dictionary with
+planes as keys and corresponding <code>numpy.meshgrid()</code> 2D arrays
+as values with Cartesian coordinates. For example, the <code>’xy’</code>
+key maps to <code>numpy.array([x, y])</code>.</p>
+</dd>
+<dt><code>cart_coords()</code></dt>
+<dd>
+<p>Returns a dictionary with keys corresponding to planes and values
+being 3D <code>numpy</code> arrays <code>[x, y, z]</code>. The missing
+coordinate for each plane is filled with zeros. Used for plotting on
+Cartesian grids rather than spherical.</p>
+</dd>
+<dt><code>spherical_grid()</code></dt>
+<dd>
+<p>Returns a dictionary with identical keys (planes). The values are 3D
+<code>numpy</code> arrays with radial, polar, and azimuthal coordinates
+of the plane, defined as <span class="math display">\[\begin{aligned}
+        r &amp;= \sqrt{x^2 + y^2 + z^2}
+        \theta &amp;= \arccos\left(\frac{z}{r}\right) \quad \in [0, \pi]
+        \phi &amp;=
+        \begin{cases}
+            \arctan2(y, x) &amp; \text{for xy and xz planes}
+            \arctan2(x, y) + \pi/2 &amp; \text{for yz plane}
+        \end{cases}
+    
+\end{aligned}\]</span></p>
+</dd>
+<dt><code>show_coord(coord, spherical_grids)</code></dt>
+<dd>
+<p>Visualizes the spherical coordinate values. <code>coord</code> is
+either <code>’r’</code>, <code>’theta’</code>, or <code>’phi’</code>,
+and <code>spherical_grids</code> is the dictionary returned by
+<code>spherical_grid()</code>. Plots the requested coordinate in all
+defined planes using <code>matplotlib</code>.</p>
+</dd>
+</dl>
+<h1 id="multipoles"><code>Multipoles</code></h1>
+<h2 id="description-1">Description</h2>
+<p>This class provides the mathematical framework for evaluating the
+multipolar fields <span class="math inline">\(A_{j m_z}\)</span> of
+electric or magnetic type using vector spherical harmonics. It supports
+field visualization in circular polarization and integrates with domains
+defined by the <code>domain_class</code>. The implementation follows the
+formalism of M.E. Rose <span class="citation" data-cites="rose">(Rose
+1957)</span>.</p>
+<h2 id="initialization-1">Initialization</h2>
+<p>Creating an instance of a <code>Multipoles</code> object sets up the
+spherical harmonics, coordinate systems, and coupling factors needed to
+evaluate and visualize multipolar radiation patterns.</p>
+<pre><code>Multipoles(l_max, m_max, wl, domain, nr=1, radius=None)</code></pre>
+<dl>
+<dt><code>l_max:</code></dt>
+<dd>
+<p>int — maximum total angular momentum quantum number <span
+class="math inline">\(l\)</span>.</p>
+</dd>
+<dt><code>m_max:</code></dt>
+<dd>
+<p>int — maximum quantum number for the z-projection of the AM <span
+class="math inline">\(m_z\)</span>.</p>
+</dd>
+<dt><code>wl:</code></dt>
+<dd>
+<p>float — wavelength of incident field (in microns).</p>
+</dd>
+<dt><code>domain:</code></dt>
+<dd>
+<p><code>domain_class</code> object — spatial domain used for evaluating
+the fields.</p>
+</dd>
+<dt><code>nr:</code></dt>
+<dd>
+<p>float — relative refractive index of the scatterer (default is
+1).</p>
+</dd>
+<dt><code>radius:</code></dt>
+<dd>
+<p>float — optional radius of the scatterer. If not specified, defaults
+to 25% of domain size.</p>
+</dd>
+</dl>
+<h2 id="methods-1">Methods</h2>
+<dl>
+<dt><code>hankel(n, x, derivative=False)</code></dt>
+<dd>
+<p>Returns the spherical Hankel function of the first kind of order
+<span class="math inline">\(n\)</span>, or its derivative if
+<code>derivative=True</code>. Defined as <span
+class="math inline">\(h_n(kr) = j_n(kr) + i y_n(kr)\)</span>.</p>
+</dd>
+<dt><code>clebsch_gordan(j1, j2, j, m1, m2, m)</code></dt>
+<dd>
+<p>Computes the Clebsch-Gordan coefficient <span
+class="math inline">\(\langle j_1, m_1; j_2, m_2 | j, m \rangle\)</span>
+using Wigner 3j symbols: <span class="math display">\[C(j_1 j_2 j; m_1
+m_2 m) = (-1)^{j_1 - j_2 + m} \sqrt{2j + 1}
+    \begin{pmatrix}
+    j_1 &amp; j_2 &amp; j
+    m_1 &amp; m_2 &amp; -m
+    \end{pmatrix}\]</span></p>
+</dd>
+<dt><code>wigner_3j(j123, m123)</code></dt>
+<dd>
+<p>Returns the Wigner 3j symbol for given quantum numbers. Used
+internally by <code>clebsch_gordan</code>.</p>
+</dd>
+<dt><code>Clp(l)</code>, <code>Clm(l)</code>, <code>Cl0(l)</code></dt>
+<dd>
+<p>Normalization coefficients for vector spherical harmonics: <span
+class="math display">\[C_{l+1}^{(e)} = -\sqrt{\frac{l}{2l+1}}, \quad
+    C_{l-1}^{(e)} = \sqrt{\frac{l+1}{2l+1}}, \quad
+    C_l^{(m)} = 1\]</span></p>
+</dd>
+<dt><code>get_Legendre(l, m, theta, diff=False)</code></dt>
+<dd>
+<p>Computes the normalized associated Legendre functions <span
+class="math inline">\(P_{l}^{m}(\cos\theta)\)</span> using
+<code>scipy.assoc_legendre_p_all()</code>, with optional derivative.
+Returns a 3D array with shape <span class="math inline">\((l+1, m+1,
+\text{len}(\theta))\)</span>.</p>
+</dd>
+<dt><code>spharm(l, m, theta, phi)</code></dt>
+<dd>
+<p>Computes the scalar spherical harmonic <span
+class="math inline">\(Y_l^m(\theta, \phi)\)</span> using the Rose
+convention: <span class="math display">\[Y_l^m (\theta, \phi) =
+\frac{1}{\sqrt{2\pi}} P_l^m(\cos\theta) e^{im\phi}\]</span></p>
+</dd>
+<dt><code>vsh(j, l, m, theta, phi)</code></dt>
+<dd>
+<p>Computes the components <span class="math inline">\(\xi_+, \xi_0,
+\xi_-\)</span> of the vector spherical harmonics: <span
+class="math display">\[\mathbf{T}_{l1j} = \sum_\mu C(l1j; M - \mu, \mu)
+Y_l^{M - \mu} \boldsymbol{\xi}_\mu\]</span></p>
+</dd>
+<dt><code>get_multipoles(l, m, spatial_fun="hankel")</code></dt>
+<dd>
+<p>Computes the electric and magnetic field components of a multipole
+<span class="math inline">\(A_{lm_z}\)</span> as follows, using the
+given spatial function (e.g., <code>"hankel"</code>,
+<code>"bessel"</code>, <code>"both"</code>) for outgoing, standing, or
+both multipole types <span class="citation" data-cites="rose">(Rose
+1957)</span>.</p>
+<p><span class="math display">\[\begin{aligned}
+    \text{Magnetic: } &amp; \mathbf{A}^{(m)}_{lm_z} = C_l^{(m)}
+\zeta_l(kr) \mathbf{T}_{llm_z}(\theta, \varphi)
+    \text{Electric: } &amp; \mathbf{A}^{(e)}_{lm_z} = C_{l+1}^{(e)}
+\zeta_{l+1}(kr) \mathbf{T}_{l,l+1,m_z}(\theta, \varphi) + C_{l-1}^{(e)}
+\zeta_{l-1}(kr) \mathbf{T}_{l,l-1,m_z}(\theta, \varphi)
+    
+\end{aligned}\]</span></p>
+<p>Returns a dictionary with the two parities as keys, each holding a
+<code>numpy</code> array with each polarization component of the
+electric field.</p>
+<pre><code>    {
+        &quot;magnetic&quot;: array([xi_+, xi_0, xi_-]),
+        &quot;electric&quot;: array([xi_+, xi_0, xi_-])
+    }</code></pre>
+</dd>
+<dt><code>plot_multipoles(l, m, type, interaction, plot, globalnorm=True)</code></dt>
+<dd>
+<p>Visualizes the field distribution for a given multipole defined by
+integers <span class="math inline">\(l\)</span> and <span
+class="math inline">\(m\)</span>. Options:</p>
+<ul>
+<li><p><code>type:</code> <code>"magnetic"</code> or
+<code>"electric"</code></p></li>
+<li><p><code>interaction:</code> <code>"scattering"</code>,
+<code>"internal"</code>, or <code>"both"</code>, dictating which spatial
+function to use in the above function, i.e., whether the multipole is
+outgoing (contributing to the scattered field), standing (contributing
+to the internal field), or both.</p></li>
+<li><p><code>plot:</code> <code>"components"</code> to show each <span
+class="math inline">\(\xi\)</span>-component, or <code>"total"</code>
+for total intensity</p></li>
+<li><p><code>globalnorm:</code> whether to normalize across all
+planes</p></li>
+</ul>
+</dd>
+</dl>
+<h1 id="planewave"><code>planeWave</code></h1>
+<h2 id="description-2">Description</h2>
+<p>The <code>planeWave</code> class applies the <code>Multipoles</code>
+class to model plane waves that can be used for interactions with a
+spherical scatterer. It computes multipolar field contributions for
+specified polarizations (linear or circular) and supports visualization
+of field components or total intensity. The implementation uses vector
+spherical harmonics and sets beam coefficients to unity for plane waves,
+simplifying the multipolar expansion.</p>
+<h2 id="initialization-2">Initialization</h2>
+<p>Creating an instance of the <code>planeWave</code> class initializes
+the beam parameters, spherical coordinate grids, and multipolar
+coefficients. It inherits from the <code>Multipoles</code> class, using
+its parameters (<code>l_max</code>, <code>m_max</code>, <code>wl</code>,
+<code>domain</code>, <code>nr</code>, <code>radius</code>) and sets up
+the plane wave properties with a fixed <code>maxJ = 40</code> for a good
+approximation.</p>
+<pre><code>planeWave(wavelength, domain, polarization=&quot;x&quot;)</code></pre>
+<dl>
+<dt><code>wavelength:</code></dt>
+<dd>
+<p>float — wavelength of the incident beam (in microns).</p>
+</dd>
+<dt><code>domain:</code></dt>
+<dd>
+<p><code>domain_class</code> object — spatial domain for field
+evaluation.</p>
+</dd>
+<dt><code>polarization:</code></dt>
+<dd>
+<p>str — polarization type: <code>"x"</code>, <code>"y"</code>,
+<code>"left circular"</code>, or <code>"right circular"</code>. Defaults
+to <code>"x"</code>.</p>
+</dd>
+</dl>
+<h2 id="methods-2">Methods</h2>
+<dl>
+<dt><code>compute_sum(spatial_fun="bessel")</code></dt>
+<dd>
+<p>Computes the total multipolar field for the plane wave by summing
+over <span class="math inline">\(j\)</span>-indexed electric and
+magnetic multipole contributions: <span class="math display">\[A =
+\sum_{j=1}^{{\text{max}_j}} i^j \sqrt{2j+1} \left[ A_{j m_z}^{(m)} + i p
+A_{j m_z}^{(e)} \right]\]</span> where <span class="math inline">\(A_{j
+m_z}^{(e/m)}\)</span> are computed using <code>get_multipoles()</code>
+with the selected <code>spatial_fun</code> (<code>"bessel"</code>,
+<code>"hankel"</code>, etc.).</p>
+</dd>
+<dt><code>compute_pol()</code></dt>
+<dd>
+<p>Returns the analytic field profile for a plane wave with given
+polarization in the circular or Cartesian basis, e.g., <span
+class="math inline">\(A = \exp{ikz}\mathbf{e_x}\)</span> for
+polarization in <span class="math inline">\(x\)</span>. Used for
+visualization and comparison. Also returns labels for the field
+components.</p>
+</dd>
+<dt><code>plot_beam(plot="components", globalnorm=False)</code></dt>
+<dd>
+<p>Visualizes the real part of the plane wave field across all defined
+planes (to confirm oscillations in the direction of propagation instead
+of a constant value). Can display:</p>
+<ul>
+<li><p>Individual components: <code>plot="components"</code></p></li>
+<li><p>Total intensity: <code>plot="total"</code></p></li>
+</ul>
+<p>The <code>globalnorm</code> flag sets whether all plots share a
+common color scale.</p>
+</dd>
+</dl>
+<h2 id="comments">Comments</h2>
+<ul>
+<li><p>The class currently supports polarizations: <code>"x"</code>,
+<code>"y"</code>, <code>"left circular"</code>, and
+<code>"right circular"</code>.</p></li>
+</ul>
+<h1 id="focusedbeam"><code>focusedBeam</code></h1>
+<h2 id="description-3">Description</h2>
+<p>The <code>focusedBeam</code> class extends the
+<code>Multipoles</code> class to model cylindrically symmetric
+Laguerre-Gaussian beams focused by an aplanatic lens (see e.g., Novotny
+&amp; Hecht <span class="citation" data-cites="nanooptics">(Novotny and
+Hecht 2012)</span>). It computes beam coefficients <span
+class="math inline">\(C_{j m_z p}\)</span> for a multipolar expansion,
+evaluates the electric field of the beam, and supports visualization of
+intensity separated in the circular polarization components or total
+intensity. The implementation accounts for lens properties (numerical
+aperture, focal length) and beam parameters (AM, helicity). It is
+largely based on the PhD thesis by Xavier Zambrana-Puyalto <span
+class="citation" data-cites="xavi">(Zambrana-Puyalto 2014)</span>.</p>
+<h2 id="initialization-3">Initialization</h2>
+<p>Creating an instance of the <code>focusedBeam</code> class
+initializes the beam parameters, spherical coordinate grids, and
+multipolar coefficients. It inherits from the <code>Multipoles</code>
+class, using its parameters (<code>l_max</code>, <code>m_max</code>,
+<code>wl</code>, <code>domain</code>, <code>nr</code>,
+<code>radius</code>) and sets up the Laguerre-Gaussian beam
+properties.</p>
+<pre><code>focusedBeam(maxJ, wavelength, domain, p=1, l=0, q=0, NA=0.9, f=1000, n_lens=1)</code></pre>
+<dl>
+<dt><code>maxJ:</code></dt>
+<dd>
+<p>int — maximum total angular momentum quantum number.</p>
+</dd>
+<dt><code>wavelength:</code></dt>
+<dd>
+<p>float — wavelength of the incident beam (in microns).</p>
+</dd>
+<dt><code>domain:</code></dt>
+<dd>
+<p><code>domain_class</code> object — spatial domain for field
+evaluation.</p>
+</dd>
+<dt><code>p:</code></dt>
+<dd>
+<p>int — helicity of the beam before focusing (<code>-1</code> or
+<code>1</code>, default is 1).</p>
+</dd>
+<dt><code>l:</code></dt>
+<dd>
+<p>int — azimuthal number of the beam (default is 0).</p>
+</dd>
+<dt><code>q:</code></dt>
+<dd>
+<p>int — radial index of the beam (default is 0).</p>
+</dd>
+<dt><code>NA:</code></dt>
+<dd>
+<p>float — numerical aperture of the focusing lens (default is 0.9).
+Allowed values are <span class="math inline">\(0.25, 0.3, 0.4, 0.5, 0.6,
+0.7, 0.8, 0.9\)</span>.</p>
+</dd>
+<dt><code>f:</code></dt>
+<dd>
+<p>float — focal length of the lens (in microns, default is 1000).</p>
+</dd>
+<dt><code>n_lens:</code></dt>
+<dd>
+<p>float — refractive index of the lens medium (default is 1).</p>
+</dd>
+</dl>
+<h2 id="methods-3">Methods</h2>
+<dl>
+<dt><code>d_jmp(j, m, p, Theta)</code></dt>
+<dd>
+<p>Computes the Wigner small-d function <span class="math inline">\(d_{m
+p}^j(\Theta)\)</span> for given quantum numbers <span
+class="math inline">\(j\)</span>, <span
+class="math inline">\(m\)</span>, and <span
+class="math inline">\(p\)</span> at angle <span
+class="math inline">\(\Theta\)</span>. The function is defined as: <span
+class="math display">\[\begin{aligned}
+        d_{m p}^j(\Theta) = (-1)^{\frac{p - m - |m - p|}{2}}
+&amp;\exp\left( \frac{1}{2} \left[ \ln \Gamma(j - M + 1) + \ln \Gamma(j
++ M + 1) \right.\right.
+        &amp;\left.\left.- \ln \Gamma(j + N + 1) - \ln \Gamma(j - N + 1)
+\right] \right)
+        &amp;\cdot \cos\left(\frac{\Theta}{2}\right)^{|m + p|}
+\sin\left(\frac{\Theta}{2}\right)^{|m - p|} P_{j - M}^{|m - p|, |m +
+p|}(\cos \Theta),
+    \end{aligned}\]</span> where <span class="math inline">\(M =
+\max(|m|, |p|)\)</span>, <span class="math inline">\(N = \min(|m|,
+|p|)\)</span>, and <span class="math inline">\(P_n^{\alpha,
+\beta}\)</span> is the Jacobi polynomial evaluated using
+<code>scipy.special.eval_jacobi</code>.</p>
+</dd>
+<dt><code>BeamCoeffs(l=None, p=None, q=None)</code></dt>
+<dd>
+<p>Computes the beam coefficients <span class="math inline">\(C_{j m_z
+p}\)</span> for the Laguerre-Gaussian beam with quantum numbers <span
+class="math inline">\(l\)</span>, <span
+class="math inline">\(p\)</span>, and <span
+class="math inline">\(q\)</span>. The coefficient is calculated via
+numerical integration over the lens aperture: <span
+class="math display">\[\label{eq:Cjmz}
+        C_{j m_z p} = \int_0^{\theta_{\text{max}}} \sin\theta \, f e^{-i
+k f} \sqrt{2\pi} \sqrt{n_{\text{lens}} \cos\theta} \, \text{LG}(q, l,
+\theta) \, d_{m_z p}^j(\theta) \, d\theta,\]</span> where <span
+class="math inline">\(m_z = l + p\)</span>, <span
+class="math inline">\(\theta_{\text{max}} = \arcsin(\text{NA} /
+n_{\text{lens}})\)</span>, <span class="math inline">\(f\)</span> is the
+focal length, <span class="math inline">\(k = 2\pi / \lambda\)</span>,
+and <span class="math inline">\(\text{LG}(q, l, \theta)\)</span> is the
+Laguerre-Gaussian beam amplitude defined with another method. Returns
+the coefficients <span class="math inline">\(C\)</span>, the lens
+integral (which should be as close to unity as possible), and the
+normalization sum <span class="math inline">\(\sum_j (2j + 1)
+|C_j|^2\)</span>, ideally close to 2 <span class="citation"
+data-cites="xavi">(Zambrana-Puyalto 2014)</span>.</p>
+</dd>
+<dt><code>plotBeamCoeffs(l=None, p=None, q=None)</code></dt>
+<dd>
+<p>Visualizes the squared magnitude of beam coefficients <span
+class="math inline">\(|C_{j m_z p}|^2\)</span> as a bar plot for
+specified <span class="math inline">\(l\)</span>, <span
+class="math inline">\(p\)</span>, and <span
+class="math inline">\(q\)</span>. The plot displays contributions for
+<span class="math inline">\(j\)</span> from <span
+class="math inline">\(\max(|m_z|, 1)\)</span> to <code>maxJ</code>, with
+optional multiple parameter combinations.</p>
+</dd>
+<dt><code>LaguerreGauss(q, l, rho, z, **kwargs)</code></dt>
+<dd>
+<p>Computes the Laguerre-Gaussian beam amplitude at radial distance
+<span class="math inline">\(\rho\)</span> and axial position <span
+class="math inline">\(z\)</span>. The amplitude is given by: <span
+class="math display">\[\begin{aligned}
+        \text{LG} = \exp\left( \ln N(l, q) - \frac{\rho^2}{w^2} + l \ln
+\rho + (l + 1) \left( \frac{1}{2} \ln 2 - \ln w \right) \right)
+L_q^l\left( \frac{2 \rho^2}{w^2} \right),
+    \end{aligned}\]</span> where <span class="math inline">\(N(l, q) =
+\sqrt{\frac{q!}{\pi (q + l)!}}\)</span> is the normalization factor,
+<span class="math inline">\(w\)</span> is the beam waist, <span
+class="math inline">\(k = 2\pi / \lambda\)</span>, and <span
+class="math inline">\(L_q^l\)</span> is the generalized Laguerre
+polynomial.</p>
+</dd>
+<dt><code>get_w(NA, l)</code></dt>
+<dd>
+<p>Returns the beam waist <span class="math inline">\(w\)</span> (in
+microns) for a given numerical aperture <code>NA</code> and orbital
+quantum number <span class="math inline">\(l\)</span>, based on
+precomputed values for <code>NA</code> = 0.25, 0.3, 0.5, or 0.9. Beam
+waist values are computed such that they fill the lens completely and
+the sum is truncated appropriately <span class="citation"
+data-cites="xavi">(Zambrana-Puyalto 2014)</span>.</p>
+</dd>
+<dt><code>compute_sum(l, p, q, spatial_fun="bessel")</code></dt>
+<dd>
+<p>Computes the total electric field for the focused beam by summing
+electric and magnetic contributions: <span class="math display">\[E =
+\sum_{j=j_0}^{j_{\text{max}}} i^j \sqrt{2j + 1} C_j \left[ A_{j m}^{(m)}
++ i p A_{j m}^{(e)} \right],\]</span> where <span
+class="math inline">\(j_0 = \max(|m|, 1)\)</span>, <span
+class="math inline">\(m = l + p\)</span>, <span
+class="math inline">\(C_j\)</span> are beam coefficients, and <span
+class="math inline">\(A_{j m}^{(m/e)}\)</span> are multipole fields
+computed via <code>get_multipoles</code>.</p>
+</dd>
+<dt><code>plot_beam(plot="components", globalnorm=False)</code></dt>
+<dd>
+<p>Visualizes the computed multipolar field sum. Plots either individual
+polarization components (<code>plot="components"</code>, showing <span
+class="math inline">\(\xi_1, \xi_0, \xi_{-1}\)</span>) or total
+intensity (<code>plot="total"</code>) across defined planes. The field
+intensity is computed as <span class="math inline">\(|E|^2\)</span>.</p>
+<dl>
+<dt><code>plot:</code></dt>
+<dd>
+<p>str — plot type: <code>"components"</code> or
+<code>"total"</code>.</p>
+</dd>
+<dt><code>globalnorm:</code></dt>
+<dd>
+<p>bool — if <code>True</code>, normalizes all plots to the global
+maximum; otherwise, each plot is normalized individually.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<h2 id="comments-1">Comments</h2>
+<p>The beam waist values in <code>get_w</code> are limited to specific
+<code>NA</code> values; interpolating for arbitrary <code>NA</code>
+could improve flexibility.</p>
+<h1 id="glmt"><code>glmt</code></h1>
+<h2 id="description-4">Description</h2>
+<p>The <code>glmt</code> class implements Mie theory within the
+Generalized Lorenz-Mie Theory (GLMT) framework to compute scattering
+coefficients for a spherical scatterer. It calculates the Mie
+coefficients <span class="math inline">\(a_j\)</span>, <span
+class="math inline">\(b_j\)</span>, <span
+class="math inline">\(c_j\)</span>, and <span
+class="math inline">\(d_j\)</span> for electric and magnetic multipoles,
+supporting both one-dimensional and two-dimensional parameter spaces
+(e.g., refractive index and size parameter). The class precomputes
+spherical Bessel and Hankel functions for efficiency. Expressions for
+the Mie coefficients are taken from Ch. 4 in Bohren <span
+class="citation" data-cites="bohren">(Craig F.Bohren 2004)</span>.</p>
+<h2 id="initialization-4">Initialization</h2>
+<p>Creating an instance of the <code>glmt</code> class initializes the
+Mie coefficients and precomputes spherical Bessel and Hankel functions
+for the specified parameters. The class supports both scalar and array
+inputs for flexibility in analyzing multiple configurations.</p>
+<pre><code>glmt(maxJ, wl, nr, x, mu=1, mu1=1, dim=None)</code></pre>
+<dl>
+<dt><code>maxJ:</code></dt>
+<dd>
+<p>int — maximum total angular momentum quantum number.</p>
+</dd>
+<dt><code>wl:</code></dt>
+<dd>
+<p>float or array — wavelength of the incident field (in microns).</p>
+</dd>
+<dt><code>nr:</code></dt>
+<dd>
+<p>float or array — relative refractive index of the scatterer.</p>
+</dd>
+<dt><code>x:</code></dt>
+<dd>
+<p>float or array — size parameter (<span class="math inline">\(k
+r\)</span>, where <span class="math inline">\(k = 2\pi /
+\lambda\)</span> and <span class="math inline">\(r\)</span> is the
+scatterer radius).</p>
+</dd>
+<dt><code>mu:</code></dt>
+<dd>
+<p>float — relative permeability of the scatterer (default is 1).</p>
+</dd>
+<dt><code>mu1:</code></dt>
+<dd>
+<p>float — relative permeability of the medium (default is 1).</p>
+</dd>
+<dt><code>dim:</code></dt>
+<dd>
+<p>int or None — dimensionality of the parameter space: <code>1</code>
+for coupled <code>nr</code> and <code>wl</code> arrays,
+<code>None</code> for 2D meshgrid (default is <code>None</code>).</p>
+</dd>
+</dl>
+<h2 id="methods-4">Methods</h2>
+<dl>
+<dt><code>a_j()</code></dt>
+<dd>
+<p>Computes the Mie scattering coefficient <span
+class="math inline">\(a_j\)</span> for electric multipoles up to
+<code>maxJ</code>. The coefficient is given by: <span
+class="math display">\[a_j = \frac{\mu n_r^2 j_j(n_r x) [x j_j(x)]&#39;
+- \mu_1 j_j(x) [n_r x j_j(n_r x)]&#39;}{\mu n_r^2 j_j(n_r x) [x
+h_j(x)]&#39; - \mu_1 h_j(x) [n_r x j_j(n_r x)]&#39;},\]</span> where
+<span class="math inline">\(j_j\)</span> is the spherical Bessel
+function, <span class="math inline">\(h_j\)</span> is the spherical
+Hankel function of the first kind, <span
+class="math inline">\(n_r\)</span> is the relative refractive index,
+<span class="math inline">\(\mu\)</span> and <span
+class="math inline">\(\mu_1\)</span> are permeabilities, and <span
+class="math inline">\([f(x)]&#39; = f(x) + x f&#39;(x)\)</span>. Returns
+an array of shape <code>(maxJ+1, ...)</code>.</p>
+</dd>
+<dt><code>b_j()</code></dt>
+<dd>
+<p>Computes the Mie scattering coefficient <span
+class="math inline">\(b_j\)</span> for magnetic multipoles up to
+<code>maxJ</code>. The coefficient is given by: <span
+class="math display">\[b_j = \frac{\mu_1 j_j(n_r x) [x j_j(x)]&#39; -
+\mu j_j(x) [n_r x j_j(n_r x)]&#39;}{\mu_1 j_j(n_r x) [x h_j(x)]&#39; -
+\mu h_j(x) [n_r x j_j(n_r x)]&#39;},\]</span> where variables are as
+defined for <span class="math inline">\(a_j\)</span>. Returns an array
+of shape <code>(maxJ+1, ...)</code>.</p>
+</dd>
+<dt><code>c_j()</code></dt>
+<dd>
+<p>Computes the Mie internal coefficient <span
+class="math inline">\(c_j\)</span> for magnetic multipoles up to
+<code>maxJ</code>. The coefficient is given by: <span
+class="math display">\[c_j = \frac{\mu_1 j_j(x) [x h_j(x)]&#39; - \mu_1
+h_j(x) [x j_j(x)]&#39;}{\mu_1 j_j(n_r x) [x h_j(x)]&#39; - \mu h_j(x)
+[n_r x j_j(n_r x)]&#39;},\]</span> where variables are as defined for
+<span class="math inline">\(a_j\)</span>. Returns an array of shape
+<code>(maxJ+1, ...)</code>.</p>
+</dd>
+<dt><code>d_j()</code></dt>
+<dd>
+<p>Computes the Mie internal coefficient <span
+class="math inline">\(d_j\)</span> for electric multipoles up to
+<code>maxJ</code>. The coefficient is given by: <span
+class="math display">\[d_j = \frac{\mu_1 n_r j_j(x) [x h_j(x)]&#39; -
+\mu_1 n_r h_j(x) [x j_j(x)]&#39;}{\mu n_r^2 j_j(n_r x) [x h_j(x)]&#39; -
+\mu_1 h_j(x) [n_r x j_j(n_r x)]&#39;},\]</span> where variables are as
+defined for <span class="math inline">\(a_j\)</span>. Returns an array
+of shape <code>(maxJ+1, ...)</code>.</p>
+</dd>
+<dt><code>hankel(n, x, derivative=False)</code></dt>
+<dd>
+<p>Computes the spherical Hankel function of the first kind <span
+class="math inline">\(h_j(x) = j_j(x) + i y_j(x)\)</span>, or its
+derivative if <code>derivative=True</code>, where <span
+class="math inline">\(j_j\)</span> and <span
+class="math inline">\(y_j\)</span> are spherical Bessel functions of the
+first and second kinds, respectively.</p>
+</dd>
+</dl>
+<h2 id="comments-2">Comments</h2>
+<p>The <code>glmt</code> class efficiently precomputes spherical Bessel
+and Hankel functions to calculate Mie coefficients for scattering and
+internal fields. It supports both 1D (coupled wavelength and refractive
+index) and 2D (meshgrid of size parameter and refractive index)
+parameter spaces. Ensure that <code>wl</code>, <code>nr</code>, and
+<code>x</code> are positive to avoid invalid physical
+configurations.</p>
+<h1 id="interaction"><code>interaction</code></h1>
+<h2 id="description-5">Description</h2>
+<p>The <code>interaction</code> class applies the
+<code>multipoles</code> to model the interaction between an incident
+electromagnetic beam and a spherical scatterer using Mie theory defined
+in the <code>glmt</code> class. It supports incident beams of types:
+plane wave or focused. This class computes the resulting electric field
+contributions using the multipolar expansions and evaluates scattering,
+internal, and extinction cross-sections. It uses the
+<code>domain_class</code> from the beam objects to enable spatial
+evaluation and visualization.</p>
+<h2 id="initialization-5">Initialization</h2>
+<pre><code>interaction(beam, domain, nr, radius, mu=1, mu1=1, interaction=&quot;both&quot;)</code></pre>
+<dl>
+<dt><code>beam:</code></dt>
+<dd>
+<p><code>beam_class</code> instance. Defines the incident beam and
+provides parameters like <code>wl</code>, <code>maxJ</code>,
+<code>mz_star</code>, and <code>polarization</code>.</p>
+</dd>
+<dt><code>domain:</code></dt>
+<dd>
+<p><code>domain_class</code> instance. Provides the 3D spatial grid and
+coordinate system for field evaluation.</p>
+</dd>
+<dt><code>nr:</code></dt>
+<dd>
+<p>float or array. Refractive index of the spherical scatterer relative
+to the surrounding medium.</p>
+</dd>
+<dt><code>radius:</code></dt>
+<dd>
+<p>float or array. Radius of the scatterer in microns.</p>
+</dd>
+<dt><code>mu:</code></dt>
+<dd>
+<p>float. Relative magnetic permeability of the scatterer (default:
+1).</p>
+</dd>
+<dt><code>mu1:</code></dt>
+<dd>
+<p>float. Relative magnetic permeability of the surrounding medium
+(default: 1).</p>
+</dd>
+<dt><code>interaction:</code></dt>
+<dd>
+<p>str. Specifies which fields to compute. Options:
+<code>"scattering"</code>, <code>"internal"</code>, or
+<code>"both"</code> (default).</p>
+</dd>
+</dl>
+<h2 id="methods-5">Methods</h2>
+<dl>
+<dt><code>_is_equal(a, b)</code></dt>
+<dd>
+<p>Returns <code>True</code> if both inputs are equal scalars or equal
+arrays, and <code>False</code> otherwise.</p>
+</dd>
+<dt><code>compute_sum(includeBeam=False)</code></dt>
+<dd>
+<p>Computes the total multipolar field <span
+class="math inline">\(\mathbf{A}\)</span> as a sum over angular momentum
+indices: <span class="math display">\[\mathbf{A} =
+\sum_{j=j_0}^{\texttt{maxJ}} i^j \sqrt{2j+1} \cdot C_j \left[ a_j
+\mathbf{A}_{j,m}^{(e)} + b_j \mathbf{A}_{j,m}^{(m)} \right] \cdot
+\texttt{SCA} + \left[ c_j \mathbf{A}_{j,m}^{(m)} + d_j
+\mathbf{A}_{j,m}^{(e)} \right] \cdot \texttt{ABS}.\]</span> If
+<code>includeBeam=True</code>, also computes the beam field without
+interaction.</p>
+</dd>
+<dt><code>getCrossSection(type="scattering", dims=1, includeParts=False, plot=True, **kwargs)</code></dt>
+<dd>
+<p>Computes cross-sections: <span class="math display">\[\begin{aligned}
+        C_{\text{sca}} &amp;= \frac{2\pi}{k^2} \sum_j (2j+1) |C_{j m
+p}|^2 \left( |a_j|^2 + |b_j|^2 \right)
+        C_{\text{ext}} &amp;= \frac{2\pi}{k^2} \sum_j (2j+1) |C_{j m
+p}|^2 \Re(a_j + b_j)
+        C_{\text{int}} &amp;= C_{\text{ext}} - C_{\text{sca}}
+    
+\end{aligned}\]</span></p>
+<dl>
+<dt><code>type:</code></dt>
+<dd>
+<p><code>"scattering"</code>, <code>"internal"</code>, or
+<code>"extinction"</code>.</p>
+</dd>
+<dt><code>dims:</code></dt>
+<dd>
+<p>0, 1, or 2. Specifies dimension of output.</p>
+</dd>
+<dt><code>includeParts:</code></dt>
+<dd>
+<p>if <code>True</code>, returns electric/magnetic contributions
+separately.</p>
+</dd>
+<dt><code>plot:</code></dt>
+<dd>
+<p>if <code>True</code>, generates a plot.</p>
+</dd>
+<dt><code>**kwargs:</code></dt>
+<dd>
+<p>optional overrides: <code>x</code>, <code>radius</code>,
+<code>nr</code>, <code>wavelength</code>.</p>
+</dd>
+</dl>
+</dd>
+<dt><code>plot_int(radius=None, nr=None, plot="components", globalnorm=False, includeBeam=False)</code></dt>
+<dd>
+<p>Visualizes the computed field intensity <span
+class="math inline">\(|\mathbf{A}|^2\)</span>. Can show circular
+polarization components (<span class="math inline">\(\xi_{\pm1},
+\xi_0\)</span>) or total intensity.</p>
+<dl>
+<dt><code>radius:</code></dt>
+<dd>
+<p>optional float. Overrides stored radius.</p>
+</dd>
+<dt><code>nr:</code></dt>
+<dd>
+<p>optional float. Overrides stored refractive index.</p>
+</dd>
+<dt><code>plot:</code></dt>
+<dd>
+<p><code>"components"</code> or <code>"total"</code>.</p>
+</dd>
+<dt><code>globalnorm:</code></dt>
+<dd>
+<p>if <code>True</code>, normalize all subplots to global max.</p>
+</dd>
+<dt><code>includeBeam:</code></dt>
+<dd>
+<p>Bool: If <code>True</code>, adds the electric field of the
+<code>beam</code> after the multipolar sum is computed and visualizes
+the total intensity.</p>
+</dd>
+</dl>
+</dd>
+<dt><code>printConstantBeamParams(x, wl, radius, nr)</code></dt>
+<dd>
+<p>Prints input beam and particle parameters when they are scalars, for
+debugging and verification.</p>
+</dd>
+</dl>
+<h1 id="treams_functions"><code>treams_functions</code></h1>
+<h2 id="description-6">Description</h2>
+<p>The <code>treams_functions</code> collection contains three functions
+that enable a connection between <code>PyScatter</code> and
+<code>treams</code>, a T-Matrix based library for scattering
+calculations <span class="citation" data-cites="treams">(Beutel,
+Fernandez-Corbaton, and Rockstuhl 2024)</span>. More specifically, it
+allows <code>focusedBeam</code> objects to be defined with
+<code>treams</code> objects, such that this illumination can be used
+with, e.g., clusters and other more complicated systems not available
+with <code>PyScatter</code>. The functions take inputs that define the
+system (materials, positions, and sizes of scatterers) with the
+<code>treams</code> syntax. They return coefficients which, in the
+T-matrix formalism, contain enough information to describe the electric
+field in a given basis.</p>
+<h2 id="initialization-6">Initialization</h2>
+<p>The three functions <code>focusedBeam_treams()</code>,
+<code>focusedBeam_treams_xs()</code>, and
+<code>focusedBeam_treams_xs_cluster()</code> are imported with
+<code>from src.treams_functions import *</code>.</p>
+<p>To use the methods, <code>treams</code> needs to be installed in a
+virtual environment, which can be done by running
+<code>pip install treams</code> in a terminal.</p>
+<p>More information about the different <code>treams</code> objects and
+methods can be found in the documentation <a
+href="https://tfp-photonics.github.io/treams/index.html">here</a>.</p>
+<h2 id="methods-6">Methods</h2>
+<dl>
+<dt><code>focusedBeam_treams(focused_beam, spheres, positions=None, radii=None)</code></dt>
+<dd>
+<p>Interface function between a <code>focusedBeam</code> object and
+<code>treams</code> spheres. Converts the beam coefficients into the
+appropriate spherical wave basis, applies the T-matrix filtering for the
+given <span class="math inline">\(m_z\)</span>-value in <a
+href="#eq:Cjmz" data-reference-type="ref"
+data-reference="eq:Cjmz">[eq:Cjmz]</a>, and returns incident and
+scattered coefficients.</p>
+<dl>
+<dt><code>focused_beam:</code></dt>
+<dd>
+<p><code>focusedBeam</code> instance. Contains beam parameters
+(<code>wl</code>, <code>maxJ</code>, <code>mz</code>,
+<code>C</code>).</p>
+</dd>
+<dt><code>spheres:</code></dt>
+<dd>
+<p><code>treams.TMatrix</code> (one scatterer) or list of T-matrices
+(multiple scatterers, corresponding radii inputs needed). Defines one or
+multiple scatterers.</p>
+</dd>
+<dt><code>positions:</code></dt>
+<dd>
+<p>optional array-like. Positions of spheres (<span
+class="math inline">\(N \times 3\)</span>). Defaults to (0,0,0) if not
+provided.</p>
+</dd>
+<dt><code>radii:</code></dt>
+<dd>
+<p>optional array-like. Radii of spheres.</p>
+</dd>
+</dl>
+<p><strong>Returns:</strong></p>
+<ul>
+<li><p><code>sca_coeffs</code> — scattered field coefficients.</p></li>
+<li><p><code>beam_coeffs</code> — incident beam coefficients.</p></li>
+<li><p><code>tm</code> — T-matrix object (possibly clustered).</p></li>
+</ul>
+</dd>
+<dt><code>focusedBeam_treams_xs(focused_beam, sphere, position=None)</code></dt>
+<dd>
+<p>Computes scattering and extinction cross-sections for a
+<code>focusedBeam</code> interacting with a single sphere for one or
+more wavevector values. If a list is provided, <span
+class="math inline">\(k0\)</span> values are taken from each
+element.</p>
+<dl>
+<dt><code>focused_beam:</code></dt>
+<dd>
+<p><code>focusedBeam</code> instance. Provides beam coefficients.</p>
+</dd>
+<dt><code>sphere:</code></dt>
+<dd>
+<p><code>treams.TMatrix</code> or list. Single or multiple wavevector
+values.</p>
+</dd>
+<dt><code>position:</code></dt>
+<dd>
+<p>optional array-like. Sphere position. Defaults to origin.</p>
+</dd>
+</dl>
+<p><strong>Returns:</strong></p>
+<ul>
+<li><p><code>sca</code> — scattering cross-section(s) <span
+class="math inline">\([\text{nm}^2]\)</span>.</p></li>
+<li><p><code>ext</code> — extinction cross-section(s) <span
+class="math inline">\([\text{nm}^2]\)</span>.</p></li>
+</ul>
+</dd>
+<dt><code>focusedBeam_treams_xs_cluster(focused_beam, spheres, positions, k0s)</code></dt>
+<dd>
+<p>Computes scattering and extinction cross-sections for a
+<code>focusedBeam</code> interacting with a cluster of spheres at given
+positions.</p>
+<dl>
+<dt><code>focused_beam:</code></dt>
+<dd>
+<p><code>focusedBeam</code> instance. Provides beam coefficients.</p>
+</dd>
+<dt><code>spheres:</code></dt>
+<dd>
+<p>list of <code>treams.TMatrix</code>. Defines cluster of scatterers
+(different radii).</p>
+</dd>
+<dt><code>positions:</code></dt>
+<dd>
+<p>array-like. Positions of spheres (<span class="math inline">\(N
+\times 3\)</span>).</p>
+</dd>
+<dt><code>k0s:</code></dt>
+<dd>
+<p>array-like. Wavenumbers for evaluation.</p>
+</dd>
+</dl>
+<p><strong>Returns:</strong></p>
+<ul>
+<li><p><code>sca</code> — list of scattering cross-sections <span
+class="math inline">\([\text{nm}^2]\)</span>.</p></li>
+<li><p><code>ext</code> — list of extinction cross-sections <span
+class="math inline">\([\text{nm}^2]\)</span>.</p></li>
+</ul>
+</dd>
+</dl>
+<div id="refs" class="references csl-bib-body hanging-indent"
+data-entry-spacing="0" role="list">
+<div id="ref-treams" class="csl-entry" role="listitem">
+Beutel, Dominik, Ivan Fernandez-Corbaton, and Carsten Rockstuhl. 2024.
+<span>“Treams – a t-Matrix-Based Scattering Code for
+Nanophotonics.”</span> <em>Computer Physics Communications Volume
+297</em>.
+</div>
+<div id="ref-bohren" class="csl-entry" role="listitem">
+Craig F.Bohren, Donald R. Huffman. 2004. <em>Absorption and Scattering
+of Light by Small Particles</em>. Wiley-VCH.
+</div>
+<div id="ref-nanooptics" class="csl-entry" role="listitem">
+Novotny, L., and B. Hecht. 2012. <em>Principles of Nano-Optics</em>. 2nd
+ed. Cambridge University Press.
+</div>
+<div id="ref-rose" class="csl-entry" role="listitem">
+Rose, Morris E. 1957. <em>Elementary Theory of Angular Momentum</em>.
+John Wiley &amp; Sons, Inc.
+</div>
+<div id="ref-xavi" class="csl-entry" role="listitem">
+Zambrana-Puyalto, Xavier. 2014. <span>“Control and Characterization of
+Nano-Structures with the Symmetries of Light.”</span> PhD thesis,
+Macquarie University.
+</div>
+</div>
 </body>
 </html>

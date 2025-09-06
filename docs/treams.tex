@@ -1,68 +1,56 @@
 \section{\texttt{treams\_functions}}
 
 \subsection{Description}
-The \texttt{treams\_functions} collection contains three functions that enable a connection between \texttt{PyScatter} and \texttt{treams}, a T-Matrix based library for scattering calculations\cite{treams}. 
-More specifically, it allows \texttt{focusedBeam} objects to be defined with \texttt{treams} objects, such that this illumination can be used with e.g. clusters that and other more complicated systems not available with \texttt{PyScatter}.
-The functions take inputs that define the system (materials, positions and sizes of scatterers) with the \texttt{treams} syntax. They return coefficients which, in the T-matrix formalism contain enough information to describe the electric field in a given basis.
+The \texttt{treams\_functions} collection contains three functions that enable a connection between \texttt{PyScatter} and \texttt{treams}, a T-Matrix based library for scattering calculations \cite{treams}. 
+More specifically, it allows \texttt{focusedBeam} objects to be defined with \texttt{treams} objects, such that this illumination can be used with, e.g., clusters and other more complicated systems not available with \texttt{PyScatter}.
+The functions take inputs that define the system (materials, positions, and sizes of scatterers) with the \texttt{treams} syntax. They return coefficients which, in the T-matrix formalism, contain enough information to describe the electric field in a given basis.
 
 \subsection{Initialization}
-The three functions \texttt{focusedBeam\_treams()}, \texttt{focusedBeam\_treams\_xs()} and \texttt{focusedBeam\_treams\_xs\_cluster()} are imported with \texttt{from src.treams\_functions import *}. \newline
-To use the methods, \texttt{treams} needs to be installed in a virtual environment, which can be done by writing \texttt{pip install treams
-} in a terminal.\\
+The three functions \texttt{focusedBeam\_treams()}, \texttt{focusedBeam\_treams\_xs()}, and \texttt{focusedBeam\_treams\_xs\_cluster()} are imported with \texttt{from src.treams\_functions import *}. \par
+To use the methods, \texttt{treams} needs to be installed in a virtual environment, which can be done by running \texttt{pip install treams} in a terminal. \par
 More information about the different \texttt{treams} objects and methods can be found in the documentation \href{https://tfp-photonics.github.io/treams/index.html}{here}.
 
-
 \subsection{Methods}
+\begin{description}
+    \item[\texttt{focusedBeam\_treams(focused\_beam, spheres, positions=None, radii=None)}]
+    Interface function between a \texttt{focusedBeam} object and \texttt{treams} spheres. Converts the beam coefficients into the appropriate spherical wave basis, applies the T-matrix filtering for the given \( m_z \)-value in \ref{eq:Cjmz}, and returns incident and scattered coefficients.
+    \begin{description}
+        \item[\texttt{focused\_beam:}] \texttt{focusedBeam} instance. Contains beam parameters (\texttt{wl}, \texttt{maxJ}, \texttt{mz}, \texttt{C}).
+        \item[\texttt{spheres:}] \texttt{treams.TMatrix} (one scatterer) or list of T-matrices (multiple scatterers, corresponding radii inputs needed). Defines one or multiple scatterers.
+        \item[\texttt{positions:}] optional array-like. Positions of spheres (\( N \times 3 \)). Defaults to (0,0,0) if not provided.
+        \item[\texttt{radii:}] optional array-like. Radii of spheres.
+    \end{description}
+    \textbf{Returns:}
+    \begin{itemize}
+        \item \texttt{sca\_coeffs} — scattered field coefficients.
+        \item \texttt{beam\_coeffs} — incident beam coefficients.
+        \item \texttt{tm} — T-matrix object (possibly clustered).
+    \end{itemize}
 
-\begin{description}[leftmargin=4cm]
+    \item[\texttt{focusedBeam\_treams\_xs(focused\_beam, sphere, position=None)}]
+    Computes scattering and extinction cross-sections for a \texttt{focusedBeam} interacting with a single sphere for one or more wavevector values. If a list is provided, \( k0 \) values are taken from each element.
+    \begin{description}
+        \item[\texttt{focused\_beam:}] \texttt{focusedBeam} instance. Provides beam coefficients.
+        \item[\texttt{sphere:}] \texttt{treams.TMatrix} or list. Single or multiple wavevector values.
+        \item[\texttt{position:}] optional array-like. Sphere position. Defaults to origin.
+    \end{description}
+    \textbf{Returns:}
+    \begin{itemize}
+        \item \texttt{sca} — scattering cross-section(s) \([\text{nm}^2]\).
+        \item \texttt{ext} — extinction cross-section(s) \([\text{nm}^2]\).
+    \end{itemize}
 
-  \item[\texttt{focusedBeam\_treams(focused\_beam, spheres, positions=None, radii=None)}] \hfill \\
-  Interface function between a \texttt{focusedBeam} object and \texttt{treams} spheres. Converts the beam coefficients into the appropriate spherical wave basis, applies the T-matrix filtering for the given \(m_z\)-value in \ref{eq:Cjmz}, and returns incident and scattered coefficients.
-
-  \begin{description}[leftmargin=1cm]
-    \item[\texttt{focused\_beam:}] \texttt{focusedBeam} instance. Contains beam parameters (\texttt{wl}, \texttt{maxJ}, \texttt{mz}, \texttt{C}).
-    \item[\texttt{spheres:}] \texttt{treams.TMatrix} (one scatterer) or list of T-matrices (multiple scatterers, corresponding radii inputs needed). Defines one or multiple scatterers.
-    \item[\texttt{positions:}] optional array-like. Positions of spheres (\(N \times 3\)). Defaults to (0,0,0) if not provided.
-    \item[\texttt{radii:}] optional array-like. Radii of spheres.
-  \end{description}
-
-  \textbf{Returns:}
-  \begin{itemize}
-    \item \texttt{sca\_coeffs} — scattered field coefficients.
-    \item \texttt{beam\_coeffs} — incident beam coefficients.
-    \item \texttt{tm} — T-matrix object (possibly clustered).
-  \end{itemize}
-
-  \item[\texttt{focusedBeam\_treams\_xs(focused\_beam, sphere, position=None)}] \hfill \\
-  Computes scattering and extinction cross-sections for a \texttt{focusedBeam} interacting with a single sphere for one or more wavevector values. If a list is provided, $k0$ values are taken from each element. 
-
-  \begin{description}[leftmargin=1cm]
-    \item[\texttt{focused\_beam:}] \texttt{focusedBeam} instance. Provides beam coefficients.
-    \item[\texttt{sphere:}] \texttt{treams.TMatrix} or list. Single or multiple wavevector values.
-    \item[\texttt{position:}] optional array-like. Sphere position. Defaults to origin.
-  \end{description}
-
-  \textbf{Returns:}
-  \begin{itemize}
-    \item \texttt{sca} — scattering cross-section(s) \([\text{nm}^2]\).
-    \item \texttt{ext} — extinction cross-section(s) \([\text{nm}^2]\).
-  \end{itemize}
-
-  \item[\texttt{focusedBeam\_treams\_xs\_cluster(focused\_beam, spheres, positions, k0s)}] \hfill \\
-  Computes scattering and extinction cross-sections for a \texttt{focusedBeam} interacting with a cluster of spheres at given positions.
-
-  \begin{description}[leftmargin=1cm]
-    \item[\texttt{focused\_beam:}] \texttt{focusedBeam} instance. Provides beam coefficients.
-    \item[\texttt{spheres:}] list of \texttt{treams.TMatrix}. Defines cluster of scatterers (different radii).
-    \item[\texttt{positions:}] array-like. Positions of spheres (\(N \times 3\)).
-    \item[\texttt{k0s:}] array-like. Wavenumbers for evaluation.
-  \end{description}
-
-  \textbf{Returns:}
-  \begin{itemize}
-    \item \texttt{sca} — list of scattering cross-sections \([\text{nm}^2]\).
-    \item \texttt{ext} — list of extinction cross-sections \([\text{nm}^2]\).
-  \end{itemize}
-
+    \item[\texttt{focusedBeam\_treams\_xs\_cluster(focused\_beam, spheres, positions, k0s)}]
+    Computes scattering and extinction cross-sections for a \texttt{focusedBeam} interacting with a cluster of spheres at given positions.
+    \begin{description}
+        \item[\texttt{focused\_beam:}] \texttt{focusedBeam} instance. Provides beam coefficients.
+        \item[\texttt{spheres:}] list of \texttt{treams.TMatrix}. Defines cluster of scatterers (different radii).
+        \item[\texttt{positions:}] array-like. Positions of spheres (\( N \times 3 \)).
+        \item[\texttt{k0s:}] array-like. Wavenumbers for evaluation.
+    \end{description}
+    \textbf{Returns:}
+    \begin{itemize}
+        \item \texttt{sca} — list of scattering cross-sections \([\text{nm}^2]\).
+        \item \texttt{ext} — list of extinction cross-sections \([\text{nm}^2]\).
+    \end{itemize}
 \end{description}
-

@@ -1,0 +1,37 @@
+.figure {
+    text-align: center;
+    margin: 1em 0;
+}
+.figure img {
+    max-width: 80%;
+    height: auto;
+}
+.subfigure {
+    display: inline-block;
+    vertical-align: top;
+    width: 49%;
+    margin: 0.5%;
+    text-align: center;
+}
+.caption {
+    font-style: italic;
+    margin-top: 0.5em;
+}
+.caption a {
+    color: blue;
+    text-decoration: none;
+}
+.center {
+    text-align: center;
+}
+dl {
+    margin: 1em 0;
+}
+dt {
+    font-weight: bold;
+    margin-top: 0.5em;
+}
+dd {
+    margin-left: 2em;
+    margin-bottom: 0.5em;
+}

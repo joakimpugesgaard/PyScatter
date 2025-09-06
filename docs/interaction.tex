@@ -1,66 +1,60 @@
 \section{\texttt{interaction}}
 
 \subsection{Description}
-The \texttt{interaction} class applies the \texttt{multipoles} to model the interaction between an incident electromagnetic beam and a spherical scatterer using Mie theory defined in the \texttt{glmt} class. It supports incident beams of types: plane wave or focused. This class computes the resulting electric field contributions using the multipolar expansions and evaluates scattering, internal, and extinction cross-sections.\\ It uses the \texttt{domain\_class} from the beam objects to enable spatial evaluation and visualization.
+The \texttt{interaction} class applies the \texttt{multipoles} to model the interaction between an incident electromagnetic beam and a spherical scatterer using Mie theory defined in the \texttt{glmt} class. It supports incident beams of types: plane wave or focused. This class computes the resulting electric field contributions using the multipolar expansions and evaluates scattering, internal, and extinction cross-sections. It uses the \texttt{domain\_class} from the beam objects to enable spatial evaluation and visualization.
 
 \subsection{Initialization}
 \begin{verbatim}
 interaction(beam, domain, nr, radius, mu=1, mu1=1, interaction="both")
 \end{verbatim}
 
-\begin{description}[leftmargin=3cm]
-  \item[\texttt{beam:}] \texttt{beam\_class} instance. Defines the incident beam and provides parameters like \texttt{wl}, \texttt{maxJ}, \texttt{mz\_star}, and \texttt{polarization}.
-  \item[\texttt{domain:}] \texttt{domain\_class} instance. Provides the 3D spatial grid and coordinate system for field evaluation.
-  \item[\texttt{nr:}] float or array. Refractive index of the spherical scatterer relative to the surrounding medium.
-  \item[\texttt{radius:}] float or array. Radius of the scatterer in microns.
-  \item[\texttt{mu:}] float. Relative magnetic permeability of the scatterer (default: 1).
-  \item[\texttt{mu1:}] float. Relative magnetic permeability of the surrounding medium (default: 1).
-  \item[\texttt{interaction:}] str. Specifies which fields to compute. Options: \texttt{"scattering"}, \texttt{"internal"}, or \texttt{"both"} (default).
+\begin{description}
+    \item[\texttt{beam:}] \texttt{beam\_class} instance. Defines the incident beam and provides parameters like \texttt{wl}, \texttt{maxJ}, \texttt{mz\_star}, and \texttt{polarization}.
+    \item[\texttt{domain:}] \texttt{domain\_class} instance. Provides the 3D spatial grid and coordinate system for field evaluation.
+    \item[\texttt{nr:}] float or array. Refractive index of the spherical scatterer relative to the surrounding medium.
+    \item[\texttt{radius:}] float or array. Radius of the scatterer in microns.
+    \item[\texttt{mu:}] float. Relative magnetic permeability of the scatterer (default: 1).
+    \item[\texttt{mu1:}] float. Relative magnetic permeability of the surrounding medium (default: 1).
+    \item[\texttt{interaction:}] str. Specifies which fields to compute. Options: \texttt{"scattering"}, \texttt{"internal"}, or \texttt{"both"} (default).
 \end{description}
 
 \subsection{Methods}
+\begin{description}
+    \item[\texttt{\_is\_equal(a, b)}]
+    Returns \texttt{True} if both inputs are equal scalars or equal arrays, and \texttt{False} otherwise.
 
-\begin{description}[leftmargin=4cm]
+    \item[\texttt{compute\_sum(includeBeam=False)}]
+    Computes the total multipolar field \( \mathbf{A} \) as a sum over angular momentum indices:
+    \begin{equation}
+        \mathbf{A} = \sum_{j=j_0}^{\texttt{maxJ}} i^j \sqrt{2j+1} \cdot C_j \left[ a_j \mathbf{A}_{j,m}^{(e)} + b_j \mathbf{A}_{j,m}^{(m)} \right] \cdot \texttt{SCA} + \left[ c_j \mathbf{A}_{j,m}^{(m)} + d_j \mathbf{A}_{j,m}^{(e)} \right] \cdot \texttt{ABS}.
+    \end{equation}
+    If \texttt{includeBeam=True}, also computes the beam field without interaction.
 
-  \item[\texttt{\_is\_equal(a, b)}] \hfill \\
-  Returns \texttt{True} if both inputs are equal scalars or equal arrays, and \texttt{False} otherwise.
+    \item[\texttt{getCrossSection(type="scattering", dims=1, includeParts=False, plot=True, **kwargs)}]
+    Computes cross-sections:
+    \begin{align}
+        C_{\text{sca}} &= \frac{2\pi}{k^2} \sum_j (2j+1) |C_{j m p}|^2 \left( |a_j|^2 + |b_j|^2 \right) 
+        C_{\text{ext}} &= \frac{2\pi}{k^2} \sum_j (2j+1) |C_{j m p}|^2 \Re(a_j + b_j) 
+        C_{\text{int}} &= C_{\text{ext}} - C_{\text{sca}}
+    \end{align}
+    \begin{description}
+        \item[\texttt{type:}] \texttt{"scattering"}, \texttt{"internal"}, or \texttt{"extinction"}.
+        \item[\texttt{dims:}] 0, 1, or 2. Specifies dimension of output.
+        \item[\texttt{includeParts:}] if \texttt{True}, returns electric/magnetic contributions separately.
+        \item[\texttt{plot:}] if \texttt{True}, generates a plot.
+        \item[\texttt{**kwargs:}] optional overrides: \texttt{x}, \texttt{radius}, \texttt{nr}, \texttt{wavelength}.
+    \end{description}
 
-  \item[\texttt{compute\_sum(includeBeam=False)}] \hfill \\
-  Computes the total multipolar field \( \mathbf{A} \) as a sum over angular momentum indices:
-  \begin{equation}
-    \mathbf{A} = \sum_{j=j_0}^{\texttt{maxJ}} i^j \sqrt{2j+1} \cdot C_j \left[ a_j \mathbf{A}_{j,m}^{(e)} + b_j \mathbf{A}_{j,m}^{(m)} \right] \cdot \texttt{SCA} + \left[ c_j \mathbf{A}_{j,m}^{(m)} + d_j \mathbf{A}_{j,m}^{(e)} \right] \cdot \texttt{ABS}.
-  \end{equation}
-  If \texttt{includeBeam=True}, also computes the beam field without interaction.
+    \item[\texttt{plot\_int(radius=None, nr=None, plot="components", globalnorm=False, includeBeam=False)}]
+    Visualizes the computed field intensity \( |\mathbf{A}|^2 \). Can show circular polarization components (\( \xi_{\pm1}, \xi_0 \)) or total intensity.
+    \begin{description}
+        \item[\texttt{radius:}] optional float. Overrides stored radius.
+        \item[\texttt{nr:}] optional float. Overrides stored refractive index.
+        \item[\texttt{plot:}] \texttt{"components"} or \texttt{"total"}.
+        \item[\texttt{globalnorm:}] if \texttt{True}, normalize all subplots to global max.
+        \item[\texttt{includeBeam:}] Bool: If \texttt{True}, adds the electric field of the \texttt{beam} after the multipolar sum is computed and visualizes the total intensity.
+    \end{description}
 
-  \item[\texttt{getCrossSection(type="scattering", dims=1, includeParts=False, plot=True, **kwargs)}] \hfill \\
-  Computes cross-sections:
-  \begin{align}
-    C_{\text{sca}} &= \frac{2\pi}{k^2} \sum_j (2j+1) |C_{j m p}|^2 \left( |a_j|^2 + |b_j|^2 \right) \\
-    C_{\text{ext}} &= \frac{2\pi}{k^2} \sum_j (2j+1) |C_{j m p}|^2 \Re(a_j + b_j) \\
-    C_{\text{int}} &=  C_{\text{ext}}- C_{\text{sca}}
-  \end{align}
-  \begin{description}[leftmargin=1cm]
-    \item[\texttt{type:}] \texttt{"scattering"}, \texttt{"internal"}, or \texttt{"extinction"}.
-    \item[\texttt{dims:}] 0, 1, or 2. Specifies dimension of output.
-    \item[\texttt{includeParts:}] if \texttt{True}, returns electric/magnetic contributions separately.
-    \item[\texttt{plot:}] if \texttt{True}, generates a plot.
-    \item[\texttt{**kwargs:}] optional overrides: \texttt{x}, \texttt{radius}, \texttt{nr}, \texttt{wavelength}.
-  \end{description}
-
-  \item[\texttt{plot\_int(radius=None, nr=None, plot="components", globalnorm=False), includeBeam = False}] \hfill \\
-  Visualizes the computed field intensity \( |\mathbf{A}|^2 \). Can show circular polarization components (\( \xi_{\pm1}, \xi_0 \)) or total intensity.
-
-  \begin{description}[leftmargin=1cm]
-    \item[\texttt{radius:}] optional float. Overrides stored radius.
-    \item[\texttt{nr:}] optional float. Overrides stored refractive index.
-    \item[\texttt{plot:}] \texttt{"components"} or \texttt{"total"}.
-    \item[\texttt{globalnorm:}] if \texttt{True}, normalize all subplots to global max.
-    \item[\texttt{includeBeam:}] Bool: If True, adds the electric field of the \texttt{beam} after the multipolar sum is computed and visualizes the total intensity.
-  \end{description}
-
-  \item[\texttt{printConstantBeamParams(x, wl, radius, nr)}] \hfill \\
-  Prints input beam and particle parameters when they are scalars, for debugging and verification.
-
+    \item[\texttt{printConstantBeamParams(x, wl, radius, nr)}]
+    Prints input beam and particle parameters when they are scalars, for debugging and verification.
 \end{description}
-
-

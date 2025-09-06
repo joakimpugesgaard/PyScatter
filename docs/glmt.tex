@@ -1,7 +1,7 @@
 \section{\texttt{glmt}}
 
 \subsection{Description}
-The \texttt{glmt} class implements Mie theory within the Generalized Lorenz-Mie Theory (GLMT) framework to compute scattering coefficients for a spherical scatterer. It calculates the Mie coefficients \( a_j \), \( b_j \), \( c_j \), and \( d_j \) for electric and magnetic multipoles, supporting both one-dimensional and two-dimensional parameter spaces (e.g., refractive index and size parameter). The class precomputes spherical Bessel and Hankel functions for efficiency. Expressions for the Mie coefficients are taken from Ch. 4 in Bohren\cite{bohren}.
+The \texttt{glmt} class implements Mie theory within the Generalized Lorenz-Mie Theory (GLMT) framework to compute scattering coefficients for a spherical scatterer. It calculates the Mie coefficients \( a_j \), \( b_j \), \( c_j \), and \( d_j \) for electric and magnetic multipoles, supporting both one-dimensional and two-dimensional parameter spaces (e.g., refractive index and size parameter). The class precomputes spherical Bessel and Hankel functions for efficiency. Expressions for the Mie coefficients are taken from Ch. 4 in Bohren \cite{bohren}.
 
 \subsection{Initialization}
 Creating an instance of the \texttt{glmt} class initializes the Mie coefficients and precomputes spherical Bessel and Hankel functions for the specified parameters. The class supports both scalar and array inputs for flexibility in analyzing multiple configurations.
@@ -10,7 +10,7 @@ Creating an instance of the \texttt{glmt} class initializes the Mie coefficients
 glmt(maxJ, wl, nr, x, mu=1, mu1=1, dim=None)
 \end{verbatim}
 
-\begin{description}[leftmargin=3cm]
+\begin{description}
     \item[\texttt{maxJ:}] int — maximum total angular momentum quantum number.
     \item[\texttt{wl:}] float or array — wavelength of the incident field (in microns).
     \item[\texttt{nr:}] float or array — relative refractive index of the scatterer.
@@ -21,38 +21,38 @@ glmt(maxJ, wl, nr, x, mu=1, mu1=1, dim=None)
 \end{description}
 
 \subsection{Methods}
-\begin{description}[leftmargin=4cm]
-    \item[\texttt{a\_j()}] \hfill \\
+\begin{description}
+    \item[\texttt{a\_j()}]
     Computes the Mie scattering coefficient \( a_j \) for electric multipoles up to \texttt{maxJ}. The coefficient is given by:
     \begin{equation}
         a_j = \frac{\mu n_r^2 j_j(n_r x) [x j_j(x)]' - \mu_1 j_j(x) [n_r x j_j(n_r x)]'}{\mu n_r^2 j_j(n_r x) [x h_j(x)]' - \mu_1 h_j(x) [n_r x j_j(n_r x)]'},
     \end{equation}
     where \( j_j \) is the spherical Bessel function, \( h_j \) is the spherical Hankel function of the first kind, \( n_r \) is the relative refractive index, \( \mu \) and \( \mu_1 \) are permeabilities, and \( [f(x)]' = f(x) + x f'(x) \). Returns an array of shape \texttt{(maxJ+1, ...)}.
 
-    \item[\texttt{b\_j()}] \hfill \\
+    \item[\texttt{b\_j()}]
     Computes the Mie scattering coefficient \( b_j \) for magnetic multipoles up to \texttt{maxJ}. The coefficient is given by:
     \begin{equation}
         b_j = \frac{\mu_1 j_j(n_r x) [x j_j(x)]' - \mu j_j(x) [n_r x j_j(n_r x)]'}{\mu_1 j_j(n_r x) [x h_j(x)]' - \mu h_j(x) [n_r x j_j(n_r x)]'},
     \end{equation}
     where variables are as defined for \( a_j \). Returns an array of shape \texttt{(maxJ+1, ...)}.
 
-    \item[\texttt{c\_j()}] \hfill \\
+    \item[\texttt{c\_j()}]
     Computes the Mie internal coefficient \( c_j \) for magnetic multipoles up to \texttt{maxJ}. The coefficient is given by:
     \begin{equation}
         c_j = \frac{\mu_1 j_j(x) [x h_j(x)]' - \mu_1 h_j(x) [x j_j(x)]'}{\mu_1 j_j(n_r x) [x h_j(x)]' - \mu h_j(x) [n_r x j_j(n_r x)]'},
     \end{equation}
     where variables are as defined for \( a_j \). Returns an array of shape \texttt{(maxJ+1, ...)}.
 
-    \item[\texttt{d\_j()}] \hfill \\
+    \item[\texttt{d\_j()}]
     Computes the Mie internal coefficient \( d_j \) for electric multipoles up to \texttt{maxJ}. The coefficient is given by:
     \begin{equation}
         d_j = \frac{\mu_1 n_r j_j(x) [x h_j(x)]' - \mu_1 n_r h_j(x) [x j_j(x)]'}{\mu n_r^2 j_j(n_r x) [x h_j(x)]' - \mu_1 h_j(x) [n_r x j_j(n_r x)]'},
     \end{equation}
     where variables are as defined for \( a_j \). Returns an array of shape \texttt{(maxJ+1, ...)}.
 
-    \item[\texttt{hankel(n, x, derivative=False)}] \hfill \\
+    \item[\texttt{hankel(n, x, derivative=False)}]
     Computes the spherical Hankel function of the first kind \( h_j(x) = j_j(x) + i y_j(x) \), or its derivative if \texttt{derivative=True}, where \( j_j \) and \( y_j \) are spherical Bessel functions of the first and second kinds, respectively.
 \end{description}
 
 \subsection{Comments}
-The \texttt{glmt} class efficiently precomputes spherical Bessel and Hankel functions to calculate Mie coefficients for scattering and internal fields. It supports both 1D (coupled wavelength and refractive index) and 2D (meshgrid of size parameter and refractive index) parameter spaces. Ensure that \texttt{wl}, \texttt{nr}, and \texttt{x} are positive to avoid invalid physical configurations. 
+The \texttt{glmt} class efficiently precomputes spherical Bessel and Hankel functions to calculate Mie coefficients for scattering and internal fields. It supports both 1D (coupled wavelength and refractive index) and 2D (meshgrid of size parameter and refractive index) parameter spaces. Ensure that \texttt{wl}, \texttt{nr}, and \texttt{x} are positive to avoid invalid physical configurations.

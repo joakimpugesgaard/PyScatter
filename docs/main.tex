@@ -1,25 +1,25 @@
-\documentclass[11pt]{article}
+\mathrm{d}ocumentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
+\usepackage{mathtools}
 \usepackage{hyperref}
 \usepackage{geometry}
 \usepackage{graphicx}
 \usepackage{enumitem}
-\usepackage{amsfonts} % For math fonts and symbols
-\usepackage{amssymb} % For additional math symbols
-\usepackage{verbatim} % For verbatim environments (code blocks)
-\usepackage{geometry} % For adjusting page margins
-\usepackage{mathrsfs} % For script fonts (optional, if used in equations)
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{mathrsfs}
 \usepackage{physics}
-\usepackage{stix} % For STIX fonts (matches matplotlib STIXGeneral)
-\geometry{margin=1in} % Set 1-inch margins
-\setlist[description]{style=nextline, font=\normalfont\bfseries} % Consistent description style
+\usepackage{stix}
+\geometry{margin=1in}
+\setlist[description]{style=nextline, font=\normalfont\bfseries, leftmargin=3cm}
 \usepackage{csquotes}
 \usepackage[backend=biber,style=ieee,sortcites,eprint=true,maxnames=5,defernumbers=true,refsegment=section]{biblatex}
 \addbibresource{bibliography.bib}
 \title{\texttt{PyScat} Documentation \\ \large Version 0.1}
 \author{}
-\date{}
+\mathrm{d}ate{}
 
 \begin{document}
 
@@ -42,9 +42,9 @@
 
 \input{multipoles}
 \newpage
-\input{planewave}
+\input{planeWave}
 \newpage
-\input{focusedbeams.tex}
+\input{focusedBeam}
 \newpage
 \input{glmt}
 \newpage

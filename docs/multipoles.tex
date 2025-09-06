@@ -1,44 +1,43 @@
 \section{\texttt{Multipoles}}
 
 \subsection{Description}
-This class provides the mathematical framework for evaluating the multipolar fields \( A_{j m_z} \) of electric or magnetic type using vector spherical harmonics. It supports field visualization in circular polarization and integrates with domains defined by the \texttt{domain\_class}. The implementation follows the formalism of M.E. Rose\cite{rose}.
+This class provides the mathematical framework for evaluating the multipolar fields \( A_{j m_z} \) of electric or magnetic type using vector spherical harmonics. It supports field visualization in circular polarization and integrates with domains defined by the \texttt{domain\_class}. The implementation follows the formalism of M.E. Rose \cite{rose}.
 
 \subsection{Initialization}
 Creating an instance of a \texttt{Multipoles} object sets up the spherical harmonics, coordinate systems, and coupling factors needed to evaluate and visualize multipolar radiation patterns.
 
 \begin{verbatim}
-Multipoles(l_max, m_max, wl, domain, nr = 1, radius = None)
+Multipoles(l_max, m_max, wl, domain, nr=1, radius=None)
 \end{verbatim}
 
-\begin{description}[leftmargin=3cm]
-    \item[l\_max:] int — maximum total angular momentum quantum number $\l$.
-    \item[m\_max:] int — maximum quantum number for the z-projection of the AM $m_z$.
-    \item[wl:] float — wavelength of incident field (in microns).
-    \item[domain:] \texttt{domain\_class} object — spatial domain used for evaluating the fields.
-    \item[nr:] float — relative refractive index of the scatterer (default is 1).
-    \item[radius:] float — optional radius of the scatterer. If not specified, defaults to 25\% of domain size.
+\begin{description}
+    \item[\texttt{l\_max:}] int — maximum total angular momentum quantum number \( l \).
+    \item[\texttt{m\_max:}] int — maximum quantum number for the z-projection of the AM \( m_z \).
+    \item[\texttt{wl:}] float — wavelength of incident field (in microns).
+    \item[\texttt{domain:}] \texttt{domain\_class} object — spatial domain used for evaluating the fields.
+    \item[\texttt{nr:}] float — relative refractive index of the scatterer (default is 1).
+    \item[\texttt{radius:}] float — optional radius of the scatterer. If not specified, defaults to 25\% of domain size.
 \end{description}
 
 \subsection{Methods}
-\begin{description}[leftmargin=4cm]
-
-    \item[\texttt{hankel(n, x, derivative=False)}] \hfill \\
+\begin{description}
+    \item[\texttt{hankel(n, x, derivative=False)}]
     Returns the spherical Hankel function of the first kind of order \( n \), or its derivative if \texttt{derivative=True}. Defined as \( h_n(kr) = j_n(kr) + i y_n(kr) \).
 
-    \item[\texttt{clebsch\_gordan(j1, j2, j, m1, m2, m)}] \hfill \\
+    \item[\texttt{clebsch\_gordan(j1, j2, j, m1, m2, m)}]
     Computes the Clebsch-Gordan coefficient \( \langle j_1, m_1; j_2, m_2 | j, m \rangle \) using Wigner 3j symbols:
     \[
     C(j_1 j_2 j; m_1 m_2 m) = (-1)^{j_1 - j_2 + m} \sqrt{2j + 1}
     \begin{pmatrix}
-    j_1 & j_2 & j \\
+    j_1 & j_2 & j 
     m_1 & m_2 & -m
     \end{pmatrix}
     \]
 
-    \item[\texttt{wigner\_3j(j123, m123)}] \hfill \\
+    \item[\texttt{wigner\_3j(j123, m123)}]
     Returns the Wigner 3j symbol for given quantum numbers. Used internally by \texttt{clebsch\_gordan}.
 
-    \item[\texttt{Clp(l)}, \texttt{Clm(l)}, \texttt{Cl0(l)}] \hfill \\
+    \item[\texttt{Clp(l)}, \texttt{Clm(l)}, \texttt{Cl0(l)}]
     Normalization coefficients for vector spherical harmonics:
     \[
     C_{l+1}^{(e)} = -\sqrt{\frac{l}{2l+1}}, \quad
@@ -47,31 +46,29 @@ Multipoles(l_max, m_max, wl, domain, nr = 1, radius = None)
     \]
 
     \item[\texttt{get\_Legendre(l, m, theta, diff=False)}]
-  Computes the normalized associated Legendre functions \(P_{l}^{m}(\cos\theta)\) using \hfill \\ \texttt{scipy.assoc\_legendre\_p\_all()}, with optional derivative.
-  Returns a 3D array with shape \((l+1,\, m+1,\, \text{len}(\theta))\).
+    Computes the normalized associated Legendre functions \( P_{l}^{m}(\cos\theta) \) using \texttt{scipy.assoc\_legendre\_p\_all()}, with optional derivative. Returns a 3D array with shape \((l+1, m+1, \text{len}(\theta))\).
 
-    \item[\texttt{spharm(l, m, theta, phi)}] \hfill \\
+    \item[\texttt{spharm(l, m, theta, phi)}]
     Computes the scalar spherical harmonic \( Y_l^m(\theta, \phi) \) using the Rose convention:
     \[
     Y_l^m (\theta, \phi) = \frac{1}{\sqrt{2\pi}} P_l^m(\cos\theta) e^{im\phi}
     \]
 
-    \item[\texttt{vsh(j, l, m, theta, phi)}] \hfill \\
+    \item[\texttt{vsh(j, l, m, theta, phi)}]
     Computes the components \( \xi_+, \xi_0, \xi_- \) of the vector spherical harmonics:
     \[
     \mathbf{T}_{l1j} = \sum_\mu C(l1j; M - \mu, \mu) Y_l^{M - \mu} \boldsymbol{\xi}_\mu
     \]
 
-    \item[\texttt{get\_multipoles(l, m, spatial\_fun="hankel")}] \hfill \\
-    Computes the electric and magnetic field components of a multipole \( A_{lm_z} \) as follows, using the given spatial function (e.g., \texttt{'hankel'}, \texttt{'bessel'}, \texttt{'both'}) for outgoing, standing or both multipole types. \cite{rose}
+    \item[\texttt{get\_multipoles(l, m, spatial\_fun="hankel")}]
+    Computes the electric and magnetic field components of a multipole \( A_{lm_z} \) as follows, using the given spatial function (e.g., \texttt{"hankel"}, \texttt{"bessel"}, \texttt{"both"}) for outgoing, standing, or both multipole types \cite{rose}.
     
     \begin{align*}
-    \text{Magnetic:}\qquad&\mathbf{A}^{(m)}_{lm_z}=C_l^{(m)}\zeta_l(kr)\mathbf{T}_{llm_z}(\theta,\varphi)\\
-    \text{Electric:}\qquad&\mathbf{A}^{(e)}_{lm_z}=C_{l+1}^{(e)}\zeta_{l+1}(kr)\mathbf{T}_{l,l+1,m_z}(\theta,\varphi)+
-    C_{l-1}^{(e)}\zeta_{l-1}(kr)\mathbf{T}_{l,l-1,m_z}(\theta,\varphi),
-    \end{align*}\\
+    \text{Magnetic: } & \mathbf{A}^{(m)}_{lm_z} = C_l^{(m)} \zeta_l(kr) \mathbf{T}_{llm_z}(\theta, \varphi) 
+    \text{Electric: } & \mathbf{A}^{(e)}_{lm_z} = C_{l+1}^{(e)} \zeta_{l+1}(kr) \mathbf{T}_{l,l+1,m_z}(\theta, \varphi) + C_{l-1}^{(e)} \zeta_{l-1}(kr) \mathbf{T}_{l,l-1,m_z}(\theta, \varphi)
+    \end{align*}
     
-    Returns a dict object with the two parities as keys, each holding a \texttt{numpy} array with each polarization component of the electric field.
+    Returns a dictionary with the two parities as keys, each holding a \texttt{numpy} array with each polarization component of the electric field.
     \begin{verbatim}
     {
         "magnetic": array([xi_+, xi_0, xi_-]),
@@ -79,13 +76,12 @@ Multipoles(l_max, m_max, wl, domain, nr = 1, radius = None)
     }
     \end{verbatim}
 
-    \item[\texttt{plot\_multipoles(l, m, type, interaction, plot, globalnorm=True)}] \hfill \\
-    Visualizes the field distribution for a given multipole defined by integers $l$ and $m$. Options:
+    \item[\texttt{plot\_multipoles(l, m, type, interaction, plot, globalnorm=True)}]
+    Visualizes the field distribution for a given multipole defined by integers \( l \) and \( m \). Options:
     \begin{itemize}
         \item \texttt{type:} \texttt{"magnetic"} or \texttt{"electric"}
-        \item \texttt{interaction:} \texttt{"scattering"}, \texttt{"internal"}, or \texttt{"both"}, dictating which \\ spatial function to use in the above function, i.e. whether the multipole is outgoing (contributing to the scattered field), standing (contributing to the internal field) or both. 
+        \item \texttt{interaction:} \texttt{"scattering"}, \texttt{"internal"}, or \texttt{"both"}, dictating which spatial function to use in the above function, i.e., whether the multipole is outgoing (contributing to the scattered field), standing (contributing to the internal field), or both.
         \item \texttt{plot:} \texttt{"components"} to show each \( \xi \)-component, or \texttt{"total"} for total intensity
         \item \texttt{globalnorm:} whether to normalize across all planes
     \end{itemize}
 \end{description}
-

@@ -4,8 +4,153 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>GLMT Documentation</title>
+  <title>glmt</title>
   <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -41,7 +186,6 @@
     div.csl-indent {
       margin-left: 2em;
     }  </style>
-  <link rel="stylesheet" href="style.css" />
   <script
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
   type="text/javascript"></script>
@@ -59,7 +203,7 @@ class="math inline">\(d_j\)</span> for electric and magnetic multipoles,
 supporting both one-dimensional and two-dimensional parameter spaces
 (e.g., refractive index and size parameter). The class precomputes
 spherical Bessel and Hankel functions for efficiency. Expressions for
-the Mie coefficients are taken from Ch. 4 in Bohren<span
+the Mie coefficients are taken from Ch. 4 in Bohren <span
 class="citation" data-cites="bohren">(Craig F.Bohren 2004)</span>.</p>
 <h2 id="initialization">Initialization</h2>
 <p>Creating an instance of the <code>glmt</code> class initializes the
@@ -67,24 +211,46 @@ Mie coefficients and precomputes spherical Bessel and Hankel functions
 for the specified parameters. The class supports both scalar and array
 inputs for flexibility in analyzing multiple configurations.</p>
 <pre><code>glmt(maxJ, wl, nr, x, mu=1, mu1=1, dim=None)</code></pre>
-<div class="description">
+<dl>
+<dt><code>maxJ:</code></dt>
+<dd>
 <p>int — maximum total angular momentum quantum number.</p>
+</dd>
+<dt><code>wl:</code></dt>
+<dd>
 <p>float or array — wavelength of the incident field (in microns).</p>
+</dd>
+<dt><code>nr:</code></dt>
+<dd>
 <p>float or array — relative refractive index of the scatterer.</p>
+</dd>
+<dt><code>x:</code></dt>
+<dd>
 <p>float or array — size parameter (<span class="math inline">\(k
 r\)</span>, where <span class="math inline">\(k = 2\pi /
 \lambda\)</span> and <span class="math inline">\(r\)</span> is the
 scatterer radius).</p>
+</dd>
+<dt><code>mu:</code></dt>
+<dd>
 <p>float — relative permeability of the scatterer (default is 1).</p>
+</dd>
+<dt><code>mu1:</code></dt>
+<dd>
 <p>float — relative permeability of the medium (default is 1).</p>
+</dd>
+<dt><code>dim:</code></dt>
+<dd>
 <p>int or None — dimensionality of the parameter space: <code>1</code>
 for coupled <code>nr</code> and <code>wl</code> arrays,
 <code>None</code> for 2D meshgrid (default is <code>None</code>).</p>
-</div>
+</dd>
+</dl>
 <h2 id="methods">Methods</h2>
-<div class="description">
-<p><br />
-Computes the Mie scattering coefficient <span
+<dl>
+<dt><code>a_j()</code></dt>
+<dd>
+<p>Computes the Mie scattering coefficient <span
 class="math inline">\(a_j\)</span> for electric multipoles up to
 <code>maxJ</code>. The coefficient is given by: <span
 class="math display">\[a_j = \frac{\mu n_r^2 j_j(n_r x) [x j_j(x)]&#39;
@@ -98,8 +264,10 @@ class="math inline">\(n_r\)</span> is the relative refractive index,
 class="math inline">\(\mu_1\)</span> are permeabilities, and <span
 class="math inline">\([f(x)]&#39; = f(x) + x f&#39;(x)\)</span>. Returns
 an array of shape <code>(maxJ+1, ...)</code>.</p>
-<p><br />
-Computes the Mie scattering coefficient <span
+</dd>
+<dt><code>b_j()</code></dt>
+<dd>
+<p>Computes the Mie scattering coefficient <span
 class="math inline">\(b_j\)</span> for magnetic multipoles up to
 <code>maxJ</code>. The coefficient is given by: <span
 class="math display">\[b_j = \frac{\mu_1 j_j(n_r x) [x j_j(x)]&#39; -
@@ -107,8 +275,10 @@ class="math display">\[b_j = \frac{\mu_1 j_j(n_r x) [x j_j(x)]&#39; -
 \mu h_j(x) [n_r x j_j(n_r x)]&#39;},\]</span> where variables are as
 defined for <span class="math inline">\(a_j\)</span>. Returns an array
 of shape <code>(maxJ+1, ...)</code>.</p>
-<p><br />
-Computes the Mie internal coefficient <span
+</dd>
+<dt><code>c_j()</code></dt>
+<dd>
+<p>Computes the Mie internal coefficient <span
 class="math inline">\(c_j\)</span> for magnetic multipoles up to
 <code>maxJ</code>. The coefficient is given by: <span
 class="math display">\[c_j = \frac{\mu_1 j_j(x) [x h_j(x)]&#39; - \mu_1
@@ -116,8 +286,10 @@ h_j(x) [x j_j(x)]&#39;}{\mu_1 j_j(n_r x) [x h_j(x)]&#39; - \mu h_j(x)
 [n_r x j_j(n_r x)]&#39;},\]</span> where variables are as defined for
 <span class="math inline">\(a_j\)</span>. Returns an array of shape
 <code>(maxJ+1, ...)</code>.</p>
-<p><br />
-Computes the Mie internal coefficient <span
+</dd>
+<dt><code>d_j()</code></dt>
+<dd>
+<p>Computes the Mie internal coefficient <span
 class="math inline">\(d_j\)</span> for electric multipoles up to
 <code>maxJ</code>. The coefficient is given by: <span
 class="math display">\[d_j = \frac{\mu_1 n_r j_j(x) [x h_j(x)]&#39; -
@@ -125,14 +297,17 @@ class="math display">\[d_j = \frac{\mu_1 n_r j_j(x) [x h_j(x)]&#39; -
 \mu_1 h_j(x) [n_r x j_j(n_r x)]&#39;},\]</span> where variables are as
 defined for <span class="math inline">\(a_j\)</span>. Returns an array
 of shape <code>(maxJ+1, ...)</code>.</p>
-<p><br />
-Computes the spherical Hankel function of the first kind <span
+</dd>
+<dt><code>hankel(n, x, derivative=False)</code></dt>
+<dd>
+<p>Computes the spherical Hankel function of the first kind <span
 class="math inline">\(h_j(x) = j_j(x) + i y_j(x)\)</span>, or its
 derivative if <code>derivative=True</code>, where <span
 class="math inline">\(j_j\)</span> and <span
 class="math inline">\(y_j\)</span> are spherical Bessel functions of the
 first and second kinds, respectively.</p>
-</div>
+</dd>
+</dl>
 <h2 id="comments">Comments</h2>
 <p>The <code>glmt</code> class efficiently precomputes spherical Bessel
 and Hankel functions to calculate Mie coefficients for scattering and
