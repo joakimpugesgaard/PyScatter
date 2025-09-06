@@ -211,8 +211,7 @@ different visualisations of the fields.</p>
 a transformation by a lens of an incident beam. In later chapters, a
 scattering sphere will be placed in the focal point of this lens, <span
 class="math inline">\(f\)</span>, making the model quite realistic. The
-focusing is illustrated in Fig. <a href="#fig:aplanatic"
-data-reference-type="ref" data-reference="fig:aplanatic">1</a>.</p>
+focusing is illustrated below.</p>
 <figure id="fig:aplanatic">
 <img src="Figures/aplanatic_lens.png" style="width:50.0%" />
 <figcaption>Sketch of the focusing of a light beam (here represented
@@ -284,8 +283,7 @@ eigenstates of <span class="math inline">\(\mathbf{J}^2\)</span> and
 <span class="math inline">\(J_z\)</span>.</p>
 <h2 id="implementation-and-visualisation">Implementation and
 visualisation</h2>
-<p>Using the multipoles as expressed in Sec. <a href="#2_rose"
-data-reference-type="ref" data-reference="2_rose">[2_rose]</a>, focused
+<p>Using the multipoles as expressed in the previous chapter, focused
 fields can be plotted in 3D.</p>
 <figure id="fig:Efoc">
 <figure id="fig:a">
@@ -313,16 +311,16 @@ z-propagating LG beams for different lens and beam parameters. XY slices
 correspond to a transverse slice of the beam. The XZ slices show the
 beam along its direction of propagation.</figcaption>
 </figure>
-<p>Examples of focused beams are shown in Fig. <a href="#fig:Efoc"
-data-reference-type="ref" data-reference="fig:Efoc">6</a> for two values
-of NA. Clearly, higher NA gives a tighter focus, judging by the spot
-sizes for the <span class="math inline">\(l=0\)</span> cases and the
-curvatures for <span class="math inline">\(l=2\)</span>. An interesting
-feature is that when <span class="math inline">\(l=0\)</span>, the LG
-beam corresponds to a Gaussian beam, having highest intensity in the
-center. For <span class="math inline">\(l &gt; 0\)</span>, the beam is
-toroidal with no intensity in the center. An important point is that one
-can in principle vary the beam waist independently of the NA and <span
+<p>Examples of focused beams are shown in the following figure for two
+values of NA. Clearly, higher NA gives a tighter focus, judging by the
+spot sizes for the <span class="math inline">\(l=0\)</span> cases and
+the curvatures for <span class="math inline">\(l=2\)</span>. An
+interesting feature is that when <span
+class="math inline">\(l=0\)</span>, the LG beam corresponds to a
+Gaussian beam, having highest intensity in the center. For <span
+class="math inline">\(l &gt; 0\)</span>, the beam is toroidal with no
+intensity in the center. An important point is that one can in principle
+vary the beam waist independently of the NA and <span
 class="math inline">\(l\)</span>. However, since <span
 class="math inline">\(l\)</span> affects the beam shape and the NA
 essentially dictates the size of the lens, I have chosen <span
@@ -336,11 +334,10 @@ excited during scattering.</p>
 <p>For NA=0.5 and 0.9, the multipolar content, <span
 class="math inline">\(\lvert C_{jm_z p} \rvert^2\)</span>, is plotted
 for incident beams with values <span class="math inline">\(l=0, 2,
-4\)</span>, and 6 in Fig. <a href="#fig:mcontent"
-data-reference-type="ref" data-reference="fig:mcontent">11</a>. Note
-that there are no multipoles of order <span class="math inline">\(j &lt;
-l + p\)</span>. It is clearly seen that the more tightly focused light
-(NA=0.9) contains fewer, lower-ordered multipoles. As <span
+4\)</span>, and 6 in the histograms. Note that there are no multipoles
+of order <span class="math inline">\(j &lt; l + p\)</span>. It is
+clearly seen that the more tightly focused light (NA=0.9) contains
+fewer, lower-ordered multipoles. As <span
 class="math inline">\(l\)</span> increases, both distributions shift to
 higher order and become broader. A tendency toward a symmetric
 bell-curve is seen, especially for NA=0.5.</p>
@@ -361,21 +358,18 @@ bell-curve is seen, especially for NA=0.5.</p>
 <img src="Figures/contentl6.png" />
 <figcaption><span class="math inline">\(l=6\)</span></figcaption>
 </figure>
-<figcaption>Histograms of the multipolar content of the expansion in Eq.
-<a href="#eq:Efoc" data-reference-type="ref"
-data-reference="eq:Efoc">[eq:Efoc]</a>. <span
-class="math inline">\(\lvert C_{jm_z p} \rvert^2\)</span> is plotted for
-each order <span class="math inline">\(j\)</span> for NA=0.9 (blue) and
-NA=0.5 (orange) for four values of the quantum number, <span
+<figcaption>Histograms of the multipolar content of the expansion for
+the focused beam. <span class="math inline">\(\lvert C_{jm_z p}
+\rvert^2\)</span> is plotted for each order <span
+class="math inline">\(j\)</span> for NA=0.9 (blue) and NA=0.5 (orange)
+for four values of the quantum number, <span
 class="math inline">\(l\)</span>.</figcaption>
 </figure>
 <p>In fact, for NA=0.9, the multipolar distribution is shown for <span
 class="math inline">\(l=0\)</span> to <span
-class="math inline">\(l=8\)</span> in Fig. <a href="#fig:Cj_NA09"
-data-reference-type="ref" data-reference="fig:Cj_NA09">12</a>, showing
-the same trend as Fig. <a href="#fig:mcontent" data-reference-type="ref"
-data-reference="fig:mcontent">11</a> that the distribution broadens and
-shifts toward higher <span class="math inline">\(j\)</span>.</p>
+class="math inline">\(l=8\)</span> in the figure below to the left,
+showing the same trend as the histograms: that the distribution broadens
+and shifts toward higher <span class="math inline">\(j\)</span>.</p>
 <figure id="fig:Cj_NA09">
 <img src="Figures/C_NA09.png" style="width:90.0%" />
 <figcaption>Colour plot of the multipolar distribution of <span
@@ -386,6 +380,7 @@ are on absolute scale. On the right, each row (<span
 class="math inline">\(l\)</span>) is normalised to its own maximum,
 highlighting the dominant modes more.</figcaption>
 </figure>
+<h1 class="unnumbered" id="bibliography">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent"
 data-entry-spacing="0" role="list">
 <div id="ref-nanooptics" class="csl-entry" role="listitem">

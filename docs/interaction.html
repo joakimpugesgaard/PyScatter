@@ -243,14 +243,13 @@ interaction.</p>
 </dd>
 <dt><code>getCrossSection(type="scattering", dims=1, includeParts=False, plot=True, **kwargs)</code></dt>
 <dd>
-<p>Computes cross-sections: <span class="math display">\[\begin{aligned}
+<p>Computes cross-sections: <span class="math display">\[\begin{split}
         C_{\text{sca}} &amp;= \frac{2\pi}{k^2} \sum_j (2j+1) |C_{j m
-p}|^2 \left( |a_j|^2 + |b_j|^2 \right)
+p}|^2 \left( |a_j|^2 + |b_j|^2 \right) \\
         C_{\text{ext}} &amp;= \frac{2\pi}{k^2} \sum_j (2j+1) |C_{j m
-p}|^2 \Re(a_j + b_j)
+p}|^2 \Re(a_j + b_j) \\
         C_{\text{int}} &amp;= C_{\text{ext}} - C_{\text{sca}}
-    
-\end{aligned}\]</span></p>
+    \end{split}\]</span></p>
 <dl>
 <dt><code>type:</code></dt>
 <dd>

@@ -216,17 +216,13 @@ class="math display">\[\label{eq:helmholtz_scalar}
     \nabla^2 \psi + k^2 \psi = 0,\]</span> in spherical coordinates by
 separation of variables, <span class="math inline">\(\psi(r, \theta,
 \varphi) = \zeta(r) Y(\theta, \varphi)\)</span>.</p>
-<p>Inserting this solution in Eq. <a href="#eq:helmholtz_scalar"
-data-reference-type="ref"
-data-reference="eq:helmholtz_scalar">[eq:helmholtz_scalar]</a> will
-yield independent ordinary differential equations for the radial and
-angular part. The radial equation has the spherical Bessel functions,
-<span class="math inline">\(j_j(r)\)</span> and <span
+<p>Inserting this solution in the Helmholtz equation will yield
+independent ordinary differential equations for the radial and angular
+part. The radial equation has the spherical Bessel functions, <span
+class="math inline">\(j_j(r)\)</span> and <span
 class="math inline">\(y_j(r)\)</span> (or any linear combination
 thereof) as solutions, while the angular equation will be satisfied by
-the spherical harmonics (See App. <a href="#app:multipoles"
-data-reference-type="ref"
-data-reference="app:multipoles">[app:multipoles]</a>).</p>
+the spherical harmonics).</p>
 <p>Using the multipolar basis to expand <span
 class="math inline">\(\mathbf{E}\)</span> and <span
 class="math inline">\(\mathbf{H}\)</span>, we may describe <em>any</em>
@@ -247,11 +243,9 @@ mode), <span class="math inline">\(\mathbf{M} = \nabla \times
 magnetic) as <span class="math inline">\(\mathbf{N} = \nabla \times
 \mathbf{M} / k\)</span>. Here, <span class="math inline">\(\mathbf{r} =
 r \hat{\mathbf{r}}\)</span> is the radial vector.</p>
-<p>Using the solutions of Eq. <a href="#eq:helmholtz_scalar"
-data-reference-type="ref"
-data-reference="eq:helmholtz_scalar">[eq:helmholtz_scalar]</a>, the
-multipolar modes have the following expressions in the spherical basis
-and coordinates: <span class="math display">\[\begin{aligned}
+<p>Using the solutions of the scalar Helmholtz equation, the multipolar
+modes have the following expressions in the spherical basis and
+coordinates: <span class="math display">\[\begin{aligned}
 \mathbf{M}_{jm_z} &amp;= \frac{m_z}{\sin \theta} P_j^{m_z}(\cos\theta)
 \zeta_j(kr) e^{im_z \phi} \, \boldsymbol{\hat{\theta}} -
 \frac{\mathrm{d} P_j^{m_z}(\cos\theta)}{\mathrm{d} \theta}
@@ -323,9 +317,7 @@ polarised light respectively.</p>
 requires finding common eigenfunctions of <span
 class="math inline">\(L_z\)</span> and <span
 class="math inline">\(S_z\)</span>, which is done with the
-Clebsch-Gordan coefficients (See App. <a href="#app:multipoles"
-data-reference-type="ref"
-data-reference="app:multipoles">[app:multipoles]</a>): <span
+Clebsch-Gordan coefficients: <span
 class="math display">\[\mathbf{T}_{jlm_z} = \sum_{\mu} C(l 1 j; m_z -
 \mu, \mu) Y_{l}^{m_z - \mu}(\theta, \varphi)
 \boldsymbol{\xi}_{\mu}\]</span> These are called vector spherical
@@ -354,16 +346,13 @@ class="math inline">\(z\)</span> as: <span
 class="math display">\[\label{eq:rosePW}
     \mathbf{E}_{pw} = ik \mathbf{A}_{pw} = ik \sqrt{2\pi}
 \sum_{l=1}^{\infty} i^l \sqrt{2l+1} ( \mathbf{A}_{lp}^{(m)} + i p
-\mathbf{A}_{lp}^{(e)} ),\]</span> As in Eq. <a href="#eq:PW_sph"
-data-reference-type="ref" data-reference="eq:PW_sph">[eq:PW_sph]</a>,
-this expansion also only sums over the index <span
+\mathbf{A}_{lp}^{(e)} ),\]</span> As in plane wave expansion, this
+expression also only sums over the index <span
 class="math inline">\(j\)</span>, keeping a fixed value of <span
 class="math inline">\(m\)</span> (here <span
 class="math inline">\(p\)</span>, representing the left or right
-circular polarisation). The electric and magnetic multipole are, as in
-Eq. <a href="#eq:PW_sph" data-reference-type="ref"
-data-reference="eq:PW_sph">[eq:PW_sph]</a>, also separated by a phase of
-<span class="math inline">\(i\)</span>.</p>
+circular polarisation). The electric and magnetic multipole are again
+separated by a phase of <span class="math inline">\(i\)</span>.</p>
 <h2 id="limits">Limits</h2>
 <p>As mentioned before, any linear combination of the spherical Bessel
 functions of the first and second kind (also referred to as the
@@ -391,18 +380,16 @@ intensity (norm squared of the three polarisations) onto an XY plane at
 <span class="math inline">\(z = 0\)</span> as well as an XZ plane at
 <span class="math inline">\(y = 0\)</span>. The XY plane would therefore
 be a horizontal slice through the middle of the XZ plane.</p>
-<p>In addition, they are divided into the three polarization components
-in Eq. <a href="#eq:S_ev" data-reference-type="ref"
-data-reference="eq:S_ev">[eq:S_ev]</a>. Since most readers are more
-familiar with the scattering multipoles than the internal, the plots use
-the Hankel function, blocking a central region of radius <span
-class="math inline">\(R = 0.25\ \mathrm{\upmu m}\)</span> where it
-diverges. In Fig. <a href="#fig:mpole" data-reference-type="ref"
-data-reference="fig:mpole">1</a>, a magnetic quadrupole (order <span
-class="math inline">\(l = 2\)</span>) is shown with <span
-class="math inline">\(m_z = 0\)</span>, i.e., no angular momentum along
-the <span class="math inline">\(z\)</span>-axis. The magnetic quadrupole
-has negligible intensity in <span class="math inline">\(z = 0\)</span>
+<p>In addition, they are divided into the three circular polarization
+components. Since most readers are more familiar with the scattering
+multipoles than the internal, the plots use the Hankel function,
+blocking a central region of radius <span class="math inline">\(R =
+0.25\ \mathrm{\upmu m}\)</span> where it diverges. In the top tow of the
+figure, a magnetic quadrupole (order <span class="math inline">\(l =
+2\)</span>) is shown with <span class="math inline">\(m_z = 0\)</span>,
+i.e., no angular momentum along the <span
+class="math inline">\(z\)</span>-axis. The magnetic quadrupole has
+negligible intensity in <span class="math inline">\(z = 0\)</span>
 (notice the low magnitude of the colour scale in the XY slices).
 Instead, the vast majority of its intensity is concentrated in four
 ’lobes’ visible in the XZ planes (giving the quadrupole name meaning) in
@@ -420,10 +407,8 @@ plotted on its own colour scale.</figcaption>
 are shown on the same colour scale.</figcaption>
 </figure>
 <p>An electric quadrupole, this time with a non-zero value of <span
-class="math inline">\(m_z\)</span>, is shown in Fig. <a
-href="#fig:epole" data-reference-type="ref"
-data-reference="fig:epole">2</a>. Here, <span
-class="math inline">\(\xi_{-1}\)</span>, the right circular
+class="math inline">\(m_z\)</span>, is shown in the bottom row. Here,
+<span class="math inline">\(\xi_{-1}\)</span>, the right circular
 polarization, also has four spots of high intensity in the XZ-plane. A
 larger distribution of intensity is also visible in the XZ plane of the
 left circular polarisation. Both of these again have negligible
@@ -434,6 +419,7 @@ has a symmetric, and significantly higher intensity distribution in the
 XY-plane at <span class="math inline">\(z = 0\)</span>. In the XZ plane,
 it has four distinct spots and two broader lobes along the <span
 class="math inline">\(x\)</span>-axis.</p>
+<h1 class="unnumbered" id="bibliography">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent"
 data-entry-spacing="0" role="list">
 <div id="ref-bohren" class="csl-entry" role="listitem">

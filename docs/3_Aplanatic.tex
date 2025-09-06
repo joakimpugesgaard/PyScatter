@@ -4,7 +4,7 @@ In the previous sections, I have shown the plane-wave expansions in multipoles f
 This section will describe how to model a monochromatic, non-paraxial, and cylindrically symmetric beam with a well-defined helicity using the \textit{aplanatic lens model}, which is explained both in \cite{nanooptics} and \cite{xavi}. Then, a brief description of the implementation will be given along with different visualisations of the fields.
 
 \subsection{The aplanatic lens model}
-The idea of the aplanatic lens model is to describe a focused beam as a transformation by a lens of an incident beam. In later chapters, a scattering sphere will be placed in the focal point of this lens, \( f \), making the model quite realistic. The focusing is illustrated in Fig. \ref{fig:aplanatic}.
+The idea of the aplanatic lens model is to describe a focused beam as a transformation by a lens of an incident beam. In later chapters, a scattering sphere will be placed in the focal point of this lens, \( f \), making the model quite realistic. The focusing is illustrated below.
 
 \begin{figure}
     \includegraphics[width=0.5\linewidth]{Figures/aplanatic_lens.png}
@@ -34,7 +34,7 @@ The integral is carried out over \( \theta_k \), a momentum-space representation
 Everything from \( N_l^q \) and after is the expression of the \( \mathrm{LG} \)-mode with a waist \( w \), also including a generalized Laguerre polynomial. \( N_l^q \) is a normalisation factor, and \( d^j_{m_z p}(\theta_k) \) is the reduced Wigner rotation matrix - a neat transformation that ensures that the scalar wave functions are always eigenstates of \( \mathbf{J}^2 \) and \( J_z \).
 
 \subsection{Implementation and visualisation}
-Using the multipoles as expressed in Sec. \ref{2_rose}, focused fields can be plotted in 3D.
+Using the multipoles as expressed in the previous chapter, focused fields can be plotted in 3D.
 
 \begin{figure}
     \begin{subfigure}[b]{0.49\textwidth}
@@ -66,13 +66,13 @@ Using the multipoles as expressed in Sec. \ref{2_rose}, focused fields can be pl
     \label{fig:Efoc}
 \end{figure}
 
-Examples of focused beams are shown in Fig. \ref{fig:Efoc} for two values of NA. Clearly, higher NA gives a tighter focus, judging by the spot sizes for the \( l=0 \) cases and the curvatures for \( l=2 \). 
+Examples of focused beams are shown in the following figure for two values of NA. Clearly, higher NA gives a tighter focus, judging by the spot sizes for the \( l=0 \) cases and the curvatures for \( l=2 \). 
 An interesting feature is that when \( l=0 \), the LG beam corresponds to a Gaussian beam, having highest intensity in the center. For \( l > 0 \), the beam is toroidal with no intensity in the center. 
 An important point is that one can in principle vary the beam waist independently of the NA and \( l \). However, since \( l \) affects the beam shape and the NA essentially dictates the size of the lens, I have chosen \( w \) such that the beam always spans the entire lens but never exceeds it (which would mean that the beam was cut off).
 
 Another interesting study is the multipolar content of the beams, i.e., the modal distribution in the expansions. This will be important later on, since the multipolar content directly impacts the modes excited during scattering.
 
-For NA=0.5 and 0.9, the multipolar content, \( \lvert C_{jm_z p} \rvert^2 \), is plotted for incident beams with values \( l=0, 2, 4 \), and 6 in Fig. \ref{fig:mcontent}. Note that there are no multipoles of order \( j < l + p \). 
+For NA=0.5 and 0.9, the multipolar content, \( \lvert C_{jm_z p} \rvert^2 \), is plotted for incident beams with values \( l=0, 2, 4 \), and 6 in the histograms. Note that there are no multipoles of order \( j < l + p \). 
 It is clearly seen that the more tightly focused light (NA=0.9) contains fewer, lower-ordered multipoles. As \( l \) increases, both distributions shift to higher order and become broader. A tendency toward a symmetric bell-curve is seen, especially for NA=0.5.
 
 \begin{figure}
@@ -101,11 +101,11 @@ It is clearly seen that the more tightly focused light (NA=0.9) contains fewer, 
         \label{fig:dd}
     \end{subfigure}
 
-    \caption{Histograms of the multipolar content of the expansion in Eq. \ref{eq:Efoc}. \( \lvert C_{jm_z p} \rvert^2 \) is plotted for each order \( j \) for NA=0.9 (blue) and NA=0.5 (orange) for four values of the quantum number, \( l \).}
+    \caption{Histograms of the multipolar content of the expansion for the focused beam. \( \lvert C_{jm_z p} \rvert^2 \) is plotted for each order \( j \) for NA=0.9 (blue) and NA=0.5 (orange) for four values of the quantum number, \( l \).}
     \label{fig:mcontent}
 \end{figure}
 
-In fact, for NA=0.9, the multipolar distribution is shown for \( l=0 \) to \( l=8 \) in Fig. \ref{fig:Cj_NA09}, showing the same trend as Fig. \ref{fig:mcontent} that the distribution broadens and shifts toward higher \( j \).
+In fact, for NA=0.9, the multipolar distribution is shown for \( l=0 \) to \( l=8 \) in the figure below to the left, showing the same trend as the histograms: that the distribution broadens and shifts toward higher \( j \).
 
 \begin{figure}
     \includegraphics[width=0.9\linewidth]{Figures/C_NA09.png}
