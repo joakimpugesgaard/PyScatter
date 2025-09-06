@@ -32,11 +32,13 @@ interaction(beam, domain, nr, radius, mu=1, mu1=1, interaction="both")
 
     \item[\texttt{getCrossSection(type="scattering", dims=1, includeParts=False, plot=True, **kwargs)}]
     Computes cross-sections:
-    \begin{align}
-        C_{\text{sca}} &= \frac{2\pi}{k^2} \sum_j (2j+1) |C_{j m p}|^2 \left( |a_j|^2 + |b_j|^2 \right) 
-        C_{\text{ext}} &= \frac{2\pi}{k^2} \sum_j (2j+1) |C_{j m p}|^2 \Re(a_j + b_j) 
+    \begin{equation}
+    \begin{split}
+        C_{\text{sca}} &= \frac{2\pi}{k^2} \sum_j (2j+1) |C_{j m p}|^2 \left( |a_j|^2 + |b_j|^2 \right) \\
+        C_{\text{ext}} &= \frac{2\pi}{k^2} \sum_j (2j+1) |C_{j m p}|^2 \Re(a_j + b_j) \\
         C_{\text{int}} &= C_{\text{ext}} - C_{\text{sca}}
-    \end{align}
+    \end{split}
+    \end{equation}
     \begin{description}
         \item[\texttt{type:}] \texttt{"scattering"}, \texttt{"internal"}, or \texttt{"extinction"}.
         \item[\texttt{dims:}] 0, 1, or 2. Specifies dimension of output.
