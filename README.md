@@ -12,7 +12,7 @@ The full documentation can be read here: https://joakimpugesgaard.github.io/PySc
 git clone https://github.com/joakimpugesgaard/PyScatter.git
 cd PyScatter
 pip install -r requirements.txt
-
+```
 
 ## Getting started
 
