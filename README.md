@@ -17,5 +17,7 @@ pip install -r requirements.txt
 ## Getting started
 
 In the 'examples' folder, Jypyter Notebooks for each module can be accessed. These explain and demonstrate the key methods of the class. This is a good starting point to learn how to call the various functions and extract relevant data or plots.
+When running the notebooks, make sure that your current working directory is the PyScatter folder so the notebooks can load the files from the src folder.
 For more in-depth problems, the source code in 'src' can be accessed.
+
 
